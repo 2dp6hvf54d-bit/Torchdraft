@@ -66,7 +66,7 @@ footer{max-width:1260px;margin:auto;padding:0 18px 26px;color:#6f7d8c;font-size:
 <header>
   <div class="top">
     <div class="brand"><div class="logo">TD</div><div><h1>TorchDraft</h1><p>Från idé till skärfil — utan CAD-krångel.</p></div></div>
-    <div class="badge">ALPHA v0.3</div>
+    <div class="badge">ALPHA v0.4</div>
   </div>
 </header>
 
@@ -78,12 +78,12 @@ footer{max-width:1260px;margin:auto;padding:0 18px 26px;color:#6f7d8c;font-size:
   </div>
   <div class="tileGrid">
     <div class="tile primary" data-open="sign"><div class="icon">🪧</div><div><h3>Skylt</h3><p>Text, ram, monteringshål och DXF-export.</p></div></div>
-    <div class="tile disabled"><div class="icon">🏠</div><div><h3>Husnummer</h3><p>Kommer i nästa version.</p></div></div>
-    <div class="tile disabled"><div class="icon">🔥</div><div><h3>Eldkorg</h3><p>Paneler, flikar och motiv.</p></div></div>
-    <div class="tile disabled"><div class="icon">🎨</div><div><h3>Väggkonst</h3><p>Plasmavänliga motiv och silhuetter.</p></div></div>
-    <div class="tile disabled"><div class="icon">🚗</div><div><h3>Fordonsdekor</h3><p>Garage- och fordonsmotiv.</p></div></div>
-    <div class="tile disabled"><div class="icon">📦</div><div><h3>Verktygstavla</h3><p>Hållare, hålbilder och etiketter.</p></div></div>
-    <div class="tile disabled"><div class="icon">📂</div><div><h3>Öppna projekt</h3><p>Import av sparade TorchDraft-projekt.</p></div></div>
+    <div class="tile" data-preset="number"><div class="icon">🏠</div><div><h3>Husnummer</h3><p>Stor siffra, ram och monteringshål.</p></div></div>
+    <div class="tile" data-preset="fire"><div class="icon">🔥</div><div><h3>Eldkorg</h3><p>Panel med luftspalter och text.</p></div></div>
+    <div class="tile" data-preset="wall"><div class="icon">🎨</div><div><h3>Väggkonst</h3><p>Enkla bergs- och solmotiv.</p></div></div>
+    <div class="tile disabled"><div class="icon">🚗</div><div><h3>Fordonsdekor</h3><p>Kommer senare.</p></div></div>
+    <div class="tile" data-preset="tool"><div class="icon">📦</div><div><h3>Verktygstavla</h3><p>Rutnät med hål och etikett.</p></div></div>
+    <div class="tile" id="openSaved"><div class="icon">📂</div><div><h3>Öppna projekt</h3><p>Öppna senast sparade projekt.</p></div></div>
     <div class="tile disabled"><div class="icon">✨</div><div><span class="pro">PRO</span><h3>Beskriv din idé</h3><p>AI-design för plasmaskärning.</p></div></div>
   </div>
   <div class="feedback"><button id="feedbackHome">Skicka feedback</button></div>
@@ -113,6 +113,7 @@ footer{max-width:1260px;margin:auto;padding:0 18px 26px;color:#6f7d8c;font-size:
       <div class="field"><label>Filnamn</label><input id="filename" value="hallgren-verkstad"></div>
       <div class="actions">
         <button class="btn primaryBtn" id="export">Exportera DXF</button>
+        <button class="btn secondaryBtn" id="exportSvg">Exportera SVG</button>
         <button class="btn secondaryBtn" id="saveProject">Spara projekt</button>
         <button class="btn ghostBtn" id="reset">Återställ</button>
       </div>
@@ -128,15 +129,16 @@ footer{max-width:1260px;margin:auto;padding:0 18px 26px;color:#6f7d8c;font-size:
       <div class="checks">
         <div class="check"><b>✓</b> DXF i millimeter</div>
         <div class="check"><b>✓</b> Enkel geometri</div>
-        <div class="check"><b>✓</b> ArcDroid-vänlig grund</div>
+        <div class="check"><b>✓</b> Plasma Check</div>
       </div>
+      <div class="notice" id="plasmaCheck">Plasma Check: inga tydliga problem hittades.</div>
       <div class="feedback"><button id="feedbackSign">Skicka feedback</button></div>
     </section>
   </div>
 </section>
 </main>
 
-<footer>TorchDraft Alpha · Första testversionen för ArcDroid-användare</footer>
+<footer>TorchDraft Alpha v0.4 · Fler fungerande verktyg</footer>
 
 <div class="modal" id="feedbackModal">
   <div class="modalCard">
@@ -221,7 +223,52 @@ $("reset").onclick=()=>{$("w").value=600;$("h").value=300;$("text").value="HALLG
 $("zoomIn").onclick=()=>{zoom=Math.min(2,zoom+.15);draw()};$("zoomOut").onclick=()=>{zoom=Math.max(.45,zoom-.15);draw()};$("zoomReset").onclick=()=>{zoom=1;draw()};
 const openFeedback=()=>{$("feedbackModal").classList.add("show")};$("feedbackHome").onclick=openFeedback;$("feedbackSign").onclick=openFeedback;$("closeFeedback").onclick=()=>$("feedbackModal").classList.remove("show");
 $("copyFeedback").onclick=async()=>{const t=$("feedbackText").value||"Jag testade TorchDraft och...";try{await navigator.clipboard.writeText(t);$("copyFeedback").textContent="Kopierat ✓"}catch{alert(t)}};
+
+const PRESETS={
+ number:{w:300,h:300,text:"27",textSize:180,frame:true,holes:true,holeD:8,margin:20,filename:"husnummer-27"},
+ fire:{w:500,h:500,text:"FIRE",textSize:70,frame:true,holes:false,holeD:8,margin:25,filename:"eldkorg-panel"},
+ wall:{w:600,h:400,text:"MOUNTAIN",textSize:65,frame:false,holes:false,holeD:8,margin:20,filename:"vaggkonst"},
+ tool:{w:600,h:400,text:"TOOLS",textSize:55,frame:true,holes:true,holeD:8,margin:20,filename:"verktygstavla"}
+};
+document.querySelectorAll("[data-preset]").forEach(el=>el.onclick=()=>{
+ const p=PRESETS[el.dataset.preset];
+ $("w").value=p.w;$("h").value=p.h;$("text").value=p.text;$("textSize").value=p.textSize;
+ $("frame").checked=p.frame;$("holes").checked=p.holes;$("holeD").value=p.holeD;$("margin").value=p.margin;$("filename").value=p.filename;
+ show("sign");draw();
+});
+$("openSaved").onclick=()=>{
+ const raw=localStorage.getItem("torchdraft_last_project");
+ if(!raw){alert("Inget sparat projekt finns ännu.");return}
+ const p=JSON.parse(raw);
+ Object.entries(p).forEach(([id,val])=>{const el=$(id);if(!el)return;if(el.type==="checkbox")el.checked=val;else el.value=val});
+ show("sign");draw();
+};
+$("saveProject").onclick=()=>{
+ const data={};
+ inputs.forEach(id=>{const el=$(id);data[id]=el.type==="checkbox"?el.checked:el.value});
+ localStorage.setItem("torchdraft_last_project",JSON.stringify(data));
+ download(($("filename").value.trim()||"torchdraft-projekt")+".torchdraft.json",JSON.stringify({version:"0.4",app:"TorchDraft",settings:data},null,2),"application/json");
+};
+function svgExport(){
+ const M=model();
+ let out=`<svg xmlns="http://www.w3.org/2000/svg" width="${M.w}mm" height="${M.h}mm" viewBox="0 0 ${M.w} ${M.h}">`;
+ if(M.frame)out+=`<rect x="0" y="0" width="${M.w}" height="${M.h}" fill="none" stroke="black"/>`;
+ M.holes.forEach(([x,y])=>out+=`<circle cx="${x}" cy="${y}" r="${M.d/2}" fill="none" stroke="black"/>`);
+ M.lines.forEach(L=>out+=`<line x1="${L[0]}" y1="${L[1]}" x2="${L[2]}" y2="${L[3]}" stroke="black"/>`);
+ out+="</svg>";return out;
+}
+$("exportSvg").onclick=()=>download(($("filename").value.trim()||"torchdraft")+".svg",svgExport(),"image/svg+xml");
+const oldDraw=draw;
+draw=function(){
+ oldDraw();
+ const M=model(),issues=[];
+ if(M.w<=2*M.m||M.h<=2*M.m)issues.push("hålmarginalen är för stor");
+ if(M.holes&&M.d<3)issues.push("monteringshålen är mycket små");
+ if(M.ts<15)issues.push("texten kan bli svår att skära");
+ $("plasmaCheck").textContent=issues.length?"Plasma Check: Kontrollera "+issues.join(", ")+".":"Plasma Check: inga tydliga problem hittades.";
+};
 draw();
+
 </script>
 </body>
 </html>

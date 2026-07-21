@@ -1,21 +1,16 @@
-# TorchDraft
+# TorchDraft v0.4
 
-TorchDraft är en webbaserad app för personer som vill skapa CNC-plasmaskärfiler utan att kunna CAD.
+Fungerande alpha för CNC-plasma:
 
-## Alpha v0.3
-- Startsida med enkla val
-- Fungerande skyltgenerator
-- Mått i millimeter
-- Förhandsgranskning
-- Monteringshål
+- Skyltgenerator
+- Snabbmall för husnummer
+- Snabbmall för eldkorgspanel
+- Snabbmall för väggkonst
+- Snabbmall för verktygstavla
 - DXF-export
-- Spara projekt
-- Feedbackfunktion
-- Mobilanpassad
+- SVG-export
+- Spara och öppna senaste projekt
+- Enkel Plasma Check
+- Mobilanpassning
 
-## Nästa steg
-- Fyllda bokstavskonturer
-- Automatiska bryggor
-- Plasma Check
-- Husnummer
-- AI Pro
+Kontrollera alltid exporterade filer i ArcDroid före skärning.
