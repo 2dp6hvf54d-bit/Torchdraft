@@ -105,7 +105,7 @@
         <aside class="editor-left">
           <div class="field"><label>Rad 1</label><input id="line1" value="HALLGREN"></div>
           <div class="field"><label>Rad 2 (valfri)</label><input id="line2" value="EST. 2024"></div>
-          <div class="field"><label>Typsnitt</label><select id="fontSelect"><option value="industrial">Industrial</option><option value="stencil">Stencil</option><option value="western">Western</option><option value="modern">Modern</option><option value="classic">Classic</option></select></div>
+          <div class="field"><label>Typsnitt</label><select id="fontSelect"><option value="industrial">Industrial</option><option value="stencil">Stencil</option><option value="western">Western</option><option value="modern">Modern</option><option value="classic">Classic (förhandsvisning)</option><option value="cut-stencil">Cut Stencil – skärbar</option></select></div>
           <div class="field"><label>Storlek</label><div class="number-row"><input id="fontSize" type="number" value="120"><span>mm</span><button>≡</button><button>☰</button></div></div>
           <div class="field"><label>Bokstavsavstånd</label><input id="letterSpace" type="range" min="0" max="16" value="5"></div>
           <button class="outline-btn" id="addText">LÄGG TILL TEXT</button>
@@ -140,9 +140,16 @@
           </div>
           <div class="field"><label>Rotation</label><div class="number-row"><input id="rotation" type="number" value="0"><span>°</span><input id="rotationRange" type="range" min="-12" max="12" value="0"></div></div>
           <div class="field"><label>Avstånd från underkant</label><div class="number-row"><input id="bottomDistance" type="number" value="40"><span>mm</span></div></div>
+          <div class="field"><label>Ram</label><select id="frameMode"><option value="outer">Ytterram</option><option value="plate">Hel plåt med utskuren text</option><option value="none">Ingen ram</option></select></div>
+          <div class="double"><div><small>Ramtjocklek</small><input id="frameThickness" type="number" value="12"></div><div><small>Hål Ø</small><input id="mountHole" type="number" value="8"></div><button id="toggleHoles" class="active-toggle">4 hål</button></div>
           <div class="price"><small>PRIS (inkl. moms)</small><strong id="price">799 kr</strong></div>
           <button class="primary full" id="addCart">LÄGG I VARUKORG</button>
-          <button class="outline-btn full" id="exportDxf">EXPORTERA DXF <svg><use href="#icon-download"/></svg></button>
+          <button class="outline-btn full" id="exportDxf">EXPORTERA RIKTIG DXF <svg><use href="#icon-download"/></svg></button>
+          <button class="outline-btn full" id="exportSvg">EXPORTERA SVG</button>
+          <div class="manufacturing-status" id="manufacturingStatus">
+            <b>SKÄRKONTROLL</b>
+            <span id="manufacturingText">Kontrollerar geometri…</span>
+          </div>
         </aside>
       </div>
     </section>

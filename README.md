@@ -1,20 +1,19 @@
-# TorchDraft v5.0 Premium
+# TorchDraft v5.1 Functional
 
-En riktig responsiv webbplats byggd utifrån det godkända visuella konceptet.
+Denna version behåller premiumdesignen men gör Design Studio funktionell för textskyltar och husnummer.
 
-## Innehåll
-- Premium startsida med plasma-hero
-- Fotografiska kategorikort
-- Populära designer
-- Interaktiv Design Studio
-- Text, typsnitt, storlek, bokstavsavstånd, material, färg och rotation
-- Dynamisk prisindikering
-- Enkel DXF R12-export med millimeterenheter
-- Mobilanpassad layout
-- Kundvagnsinteraktion och feedback
+## Riktig export
+- DXF R12
+- Millimeterenheter
+- Slutna rektangulära textkonturer i Cut Stencil
+- Ytterram, hel plåt eller ingen ram
+- Fyra valfria monteringshål
+- Två textrader
+- SVG-export
+- Skärkontroll med varningar
 
-## Uppladdning till GitHub
-Alla filer ligger i zip-filens rot. Ladda upp samtliga filer till repots huvudmapp och ersätt filer med samma namn.
+## Begränsning
+Fotografiska jakt-, fisk-, fordons- och maskinmotiv är fortfarande produktförhandsvisningar.
+De exporteras ännu inte som vektorgeometri. Version 5.1 gör textskyltar och husnummer verkligt exporterbara.
 
-## Viktigt om DXF
-DXF-exporten i denna visuella testversion skapar säker yttergeometri och en textzon, men omvandlar ännu inte valfritt typsnitt till fullständiga skärkonturer. Kontrollera alltid filen i ArcDroid och torrkör före fysisk skärning.
+Kontrollera alltid DXF i ArcDroid och torrkör innan plasmaskärning.
