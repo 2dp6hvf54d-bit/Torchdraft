@@ -1,323 +1,98 @@
 <!doctype html>
 <html lang="sv">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0a0d12">
-<title>TorchDraft v1.5</title>
-<style>
-:root{--bg:#080b0f;--panel:#111821;--panel2:#17212c;--line:#2c3947;--text:#f4f7fa;--muted:#97a5b4;--orange:#ff7a18;--orange2:#ffad65;--green:#4ad38f;--yellow:#ffd166}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 15% 0%,rgba(255,122,24,.13),transparent 32%),linear-gradient(145deg,#06080b,#111822);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-button,input,select,textarea{font:inherit}button{cursor:pointer}
-header{position:sticky;top:0;z-index:30;background:rgba(8,11,15,.92);backdrop-filter:blur(15px);border-bottom:1px solid rgba(255,255,255,.06)}
-.top{max-width:1380px;margin:auto;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:15px;background:linear-gradient(145deg,#ff6a00,#ff9a45);display:grid;place-items:center;color:#1a0e05;font-weight:950;box-shadow:0 12px 32px rgba(255,122,24,.22)}h1{font-size:22px;margin:0}.brand p{font-size:12px;color:var(--muted);margin:2px 0 0}.badge{font-size:12px;border:1px solid rgba(255,122,24,.3);color:var(--orange2);padding:7px 10px;border-radius:999px}
-main{max-width:1380px;margin:auto;padding:16px}.view{display:none}.view.active{display:block}.hero{padding:14px 2px}.hero h2{font-size:34px;margin:0 0 7px}.hero p{margin:0;color:var(--muted)}
-.tabs{display:flex;gap:8px;overflow:auto;padding:8px 0 14px}.tab{white-space:nowrap;border:1px solid var(--line);background:#111821;color:#d7e0e8;border-radius:999px;padding:10px 14px;font-weight:800}.tab.active{background:rgba(255,122,24,.15);border-color:rgba(255,122,24,.45);color:var(--orange2)}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.tile{background:rgba(17,24,33,.96);border:1px solid var(--line);border-radius:18px;padding:16px;min-height:160px;display:flex;flex-direction:column;justify-content:space-between;transition:.18s}.tile:hover{transform:translateY(-2px);border-color:#516170}.tile .icon{font-size:30px}.tile h3{margin:14px 0 5px;font-size:17px}.tile p{margin:0;color:var(--muted);font-size:13px;line-height:1.4}.tile.primary{background:linear-gradient(145deg,rgba(255,122,24,.17),rgba(17,24,33,.97));border-color:rgba(255,122,24,.4)}
-.card{background:rgba(17,24,33,.96);border:1px solid var(--line);border-radius:20px;box-shadow:0 22px 70px rgba(0,0,0,.24)}.editor{display:grid;grid-template-columns:410px 1fr;gap:17px}.settings,.previewCard{padding:17px}.back{background:transparent;border:1px solid #3b4855;color:white;border-radius:11px;padding:9px 12px;font-weight:800}.sectionTitle{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.sectionTitle h3{margin:0}.small{font-size:12px;color:var(--muted)}
-.field{margin-bottom:12px}label{display:block;font-size:12px;font-weight:800;color:#cbd5df;margin-bottom:6px}input,select,textarea{width:100%;border:1px solid #354353;background:#0a1016;color:white;border-radius:11px;padding:11px 12px;outline:none}input:focus,select:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,122,24,.1)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.rangeRow{display:grid;grid-template-columns:1fr 72px;gap:9px;align-items:center}.rangeRow input[type=range]{padding:0;accent-color:var(--orange)}.switch{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}.switch input{width:21px;height:21px;accent-color:var(--orange)}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.btn{border:0;border-radius:11px;padding:12px 14px;font-weight:900}.primary{background:linear-gradient(145deg,var(--orange),#ff9c49);color:#1a1008;flex:1}.secondary{background:#25313d;color:white}.ghost{background:transparent;border:1px solid #3a4856;color:#d6e0e9}
-.canvasWrap{background:#070a0e;border:1px dashed #3a4755;border-radius:16px;overflow:hidden;position:relative}.preview{display:block;width:100%;height:540px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}.status{font-size:12px;padding:7px 10px;border-radius:999px;border:1px solid rgba(74,211,143,.25);background:rgba(74,211,143,.1);color:var(--green);font-weight:850}.notice{margin-top:12px;padding:12px;border-radius:12px;background:#161d24;border:1px solid #34414e;font-size:12px;color:#c8d2dc;line-height:1.45}.notice strong{color:white}.warning{background:#241e11;border-color:#5a4c22;color:#ffe49a}.libraryTag{display:inline-flex;padding:5px 8px;border-radius:999px;background:#202a35;color:#aebcca;font-size:11px;font-weight:800;margin-bottom:7px}
-footer{max-width:1380px;margin:auto;padding:0 18px 25px;color:#6f7d8b;font-size:11px}
-@media(max-width:960px){.grid{grid-template-columns:repeat(2,1fr)}.editor{grid-template-columns:1fr}.preview{height:410px}}
-@media(max-width:520px){main{padding:11px}.grid{grid-template-columns:1fr 1fr;gap:9px}.tile{min-height:145px;padding:13px}.hero h2{font-size:28px}.badge{display:none}.brand p{display:none}.preview{height:340px}.grid2{grid-template-columns:1fr 1fr}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080b10">
+  <title>TorchDraft 3.0</title>
+  <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-<header><div class="top">
-  <div class="brand"><div class="logo">TD</div><div><h1>TorchDraft</h1><p>Design Studio och Shop för CNC-plasma.</p></div></div>
-  <div class="badge">v2.0 EARLY ACCESS</div>
-</div></header>
+<header class="topbar">
+  <a class="brand" href="#home"><span class="mark">TD</span><span><b>TorchDraft</b><small>AI Design Studio för metall</small></span></a>
+  <span class="early">V3.0 EARLY ACCESS</span>
+</header>
 
 <main>
-<section id="home" class="view active">
-  <div class="hero"><h2 id="heroTitle">TorchDraft Design</h2><p id="heroText">Skapa riktiga skärfiler utan CAD-krångel.</p></div>
-  <div class="tabs">
-    <button class="tab active" id="modeDesign">Design Studio</button>
-    <button class="tab" id="modeShop">TorchDraft Shop</button>
-    <button class="tab" id="modeProjects">Mina projekt</button>
-  </div>
-  <div id="dashboard" class="grid" style="margin-bottom:16px">
-    <button class="tile primary" id="quickNew"><div class="icon">＋</div><div><h3>Nytt projekt</h3><p>Välj mall och börja designa.</p></div></button>
-    <button class="tile" id="quick108"><div class="icon">108</div><div><h3>Verifieringstest</h3><p>Husnummer 108, 300 × 300 mm.</p></div></button>
-    <button class="tile" id="quickSaved"><div class="icon">📁</div><div><h3>Sparade projekt</h3><p>Fortsätt där du slutade.</p></div></button>
-    <button class="tile" id="qualityInfo"><div class="icon">✓</div><div><h3>Kvalitetsnivåer</h3><p>Experimentell, kontrollerad och skärverifierad.</p></div></button>
-  </div>
-  <div class="tabs" id="tabs">
-    <button class="tab active" data-cat="all">Alla</button>
-    <button class="tab" data-cat="text">Text & skylt</button>
-    <button class="tab" data-cat="jakt">Jakt</button>
-    <button class="tab" data-cat="fiske">Fiske</button>
-    <button class="tab" data-cat="natur">Natur</button>
-    <button class="tab" data-cat="verkstad">Verkstad</button>
-    <button class="tab" data-cat="panel">Paneler</button>
-  </div>
-  <div class="grid" id="templateGrid"></div>
-</section>
+  <section id="home" class="page active">
+    <div class="hero">
+      <span class="eyebrow">DESIGN + SHOP</span>
+      <h1>Från idé till skärfil.</h1>
+      <p>Bygg plasmavänliga skyltar och motiv utan att kunna CAD.</p>
+      <div class="hero-actions">
+        <button class="primary" data-go="studio">Öppna Design Studio</button>
+        <button class="secondary" data-go="shop">Öppna Shop</button>
+      </div>
+    </div>
 
-<section id="editor" class="view">
-  <div style="margin-bottom:12px"><button id="back" class="back">← Till mallarna</button></div>
-  <div class="editor">
-    <section class="card settings">
-      <div class="sectionTitle"><h3 id="templateTitle">Mall</h3><span class="small">mm</span></div>
-      <div class="grid2">
-        <div class="field"><label>Bredd</label><input id="w" type="number" value="600"></div>
-        <div class="field"><label>Höjd</label><input id="h" type="number" value="350"></div>
-      </div>
-      <div class="field"><label>Text</label><input id="text" value="HALLGREN"></div>
-      <div class="grid2">
-        <div class="field"><label>Typsnitt</label><select id="fontStyle"><option value="block">Torch Block</option><option value="stencil">Torch Stencil</option><option value="wide">Torch Wide</option><option value="narrow">Torch Narrow</option></select></div>
-        <div class="field"><label>Placering</label><select id="textPos"><option value="bottom">Nedtill</option><option value="top">Upptill</option><option value="center">Mitten</option><option value="none">Ingen text</option></select></div>
-      </div>
-      <div class="field"><label>Bokstavstjocklek</label><div class="rangeRow"><input id="thickness" type="range" min="0.45" max="1" value="0.72" step="0.01"><input id="thicknessNum" type="number" min="0.45" max="1" value="0.72" step="0.01"></div></div>
-      <div class="grid2">
-        <div class="field"><label>Textstorlek</label><input id="textSize" type="number" value="62"></div>
-        <div class="field"><label>Ramens tjocklek</label><input id="frameT" type="number" value="16"></div>
-      </div>
-      <div class="switch"><span>Ytterram</span><input id="frame" type="checkbox" checked></div>
-      <div class="switch"><span>Monteringshål</span><input id="holes" type="checkbox" checked></div>
-      <div class="grid2">
-        <div class="field"><label>Håldiameter</label><input id="holeD" type="number" value="8"></div>
-        <div class="field"><label>Minsta detalj</label><input id="minFeature" type="number" value="4"></div>
-      </div>
-      <div class="field"><label>Filnamn</label><input id="filename" value="torchdraft-mall"></div>
-      <div class="actions">
-        <button id="exportDxf" class="btn primary">Exportera DXF</button>
-        <button id="exportSvg" class="btn secondary">Exportera SVG</button>
-        <button id="savePng" class="btn secondary">Spara förhandsbild</button>
-        <button id="saveProject" class="btn secondary">Spara projekt</button>
-        <button id="exportProject" class="btn ghost">Exportera projekt</button>
-      </div>
-      <div class="notice warning">Mallarna är egenritade och förenklade för plasmaskärning. Kontrollera alltid skala och skärordning i ArcDroid före tändning.</div>
-    </section>
+    <div class="mode-grid">
+      <button class="mode-card orange" data-go="studio">
+        <span>✦</span><h2>TorchDraft Design</h2>
+        <p>Skapa, kontrollera och exportera DXF.</p>
+      </button>
+      <button class="mode-card" data-go="shop">
+        <span>◆</span><h2>TorchDraft Shop</h2>
+        <p>Anpassa produkter för framtida beställning.</p>
+      </button>
+    </div>
 
-    <section class="card previewCard">
-      <div class="toolbar"><h3>Förhandsgranskning</h3><div id="status" class="status">✓ Skärbar grundgeometri</div></div>
-      <div class="canvasWrap"><svg id="svg" class="preview" viewBox="0 0 900 560"></svg></div>
-      <div id="check" class="notice"><strong>Plasma Check:</strong> Klar.</div>
-      <div class="notice"><strong>Status:</strong> <span id="verificationStatus">Experimentell mall</span></div>
-    </section>
-  </div>
-</section>
+    <div class="section-head"><div><span class="eyebrow">FORTSÄTT</span><h2>Mina projekt</h2></div><button class="text-btn" id="clearProjects">Rensa</button></div>
+    <div id="recentProjects" class="project-list"></div>
+  </section>
+
+  <section id="studio" class="page">
+    <div class="page-head"><button class="back" data-go="home">←</button><div><span class="eyebrow">TORCHDRAFT DESIGN</span><h1>Välj en mall</h1></div></div>
+    <div id="filters" class="filters"></div>
+    <div id="templateGrid" class="template-grid"></div>
+  </section>
+
+  <section id="editor" class="page">
+    <div class="page-head"><button class="back" data-go="studio">←</button><div><span class="eyebrow">DESIGN STUDIO</span><h1 id="editorTitle">Mall</h1></div></div>
+    <div class="editor-layout">
+      <aside class="panel controls">
+        <div class="field"><label>Text</label><input id="textInput" value="108"></div>
+        <div class="two">
+          <div class="field"><label>Bredd (mm)</label><input id="widthInput" type="number" value="300"></div>
+          <div class="field"><label>Höjd (mm)</label><input id="heightInput" type="number" value="300"></div>
+        </div>
+        <div class="two">
+          <div class="field"><label>Textstorlek</label><input id="textSizeInput" type="number" value="125"></div>
+          <div class="field"><label>Stil</label><select id="fontInput"><option value="block">Block</option><option value="wide">Wide</option><option value="narrow">Narrow</option></select></div>
+        </div>
+        <div class="field"><label>Tjocklek <span id="strokeValue">72%</span></label><input id="strokeInput" type="range" min="45" max="100" value="72"></div>
+        <div class="switch"><span>Ytterkontur</span><input id="outerInput" type="checkbox" checked></div>
+        <div class="switch"><span>4 monteringshål</span><input id="holesInput" type="checkbox" checked></div>
+        <div class="two">
+          <div class="field"><label>Håldiameter</label><input id="holeInput" type="number" value="8"></div>
+          <div class="field"><label>Minsta detalj</label><input id="minInput" type="number" value="4"></div>
+        </div>
+
+        <div class="quality-card">
+          <b id="qualityTitle">Experimentell</b>
+          <span id="qualityText">Geometrin är skapad men inte skärverifierad.</span>
+        </div>
+
+        <div class="button-row">
+          <button class="primary" id="exportDxf">Exportera DXF</button>
+          <button class="secondary" id="saveProject">Spara projekt</button>
+        </div>
+      </aside>
+
+      <section class="panel preview-panel">
+        <div class="preview-head"><b>Förhandsvisning</b><span id="plasmaStatus" class="ok">✓ Plasma Check</span></div>
+        <svg id="preview" viewBox="0 0 900 600" aria-label="Förhandsvisning"></svg>
+        <div id="warnings" class="warning-box">Inga tydliga problem hittades.</div>
+      </section>
+    </div>
+  </section>
+
+  <section id="shop" class="page">
+    <div class="page-head"><button class="back" data-go="home">←</button><div><span class="eyebrow">TORCHDRAFT SHOP</span><h1>Anpassningsbara produkter</h1></div></div>
+    <div class="shop-note">Shoppen är en design-demo. Betalning och beställning är inte aktiverat ännu.</div>
+    <div id="shopGrid" class="template-grid"></div>
+  </section>
 </main>
-<footer>TorchDraft v2.0 Early Access · Design Studio + Shop</footer>
 
-<script>
-const $=id=>document.getElementById(id);
-const show=id=>{document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));$(id).classList.add("active");window.scrollTo({top:0,behavior:"smooth"})};
-
-const templates=[
-{id:"text-sign",cat:"text",icon:"🪧",name:"Stencils skylt",desc:"Egen text med fyra skärbara blockstilar.",kind:"sign",text:"HALLGREN",textPos:"center"},
-{id:"house",cat:"text",icon:"🏠",name:"Husnummer",desc:"Stor siffra, ram och monteringshål.",kind:"house",text:"27",textPos:"center"},
-{id:"deer-mountain",cat:"jakt",icon:"🦌",name:"Hjort i fjäll",desc:"Förenklad hjort, granar och fjällkontur.",kind:"deer",text:"JAKTLAGET",textPos:"bottom"},
-{id:"deer-family",cat:"jakt",icon:"🌲",name:"Hjortfamilj",desc:"Två djur och naturmark.",kind:"deerFamily",text:"FAMILJEN",textPos:"bottom"},
-{id:"fish",cat:"fiske",icon:"🐟",name:"Stor fisk",desc:"Original silhuett för fiskeskylt.",kind:"fish",text:"GONE FISHING",textPos:"bottom"},
-{id:"fish-circle",cat:"fiske",icon:"🎣",name:"Fisk i cirkel",desc:"Fisk, vattenlinje och rund ram.",kind:"fishCircle",text:"FISKELAGET",textPos:"bottom"},
-{id:"tree",cat:"natur",icon:"🌳",name:"Livets träd",desc:"Förenklat träd med kraftiga grenar.",kind:"tree",text:"",textPos:"none"},
-{id:"butterfly",cat:"natur",icon:"🦋",name:"Fjäril",desc:"Symmetrisk dekor för trädgård eller skylt.",kind:"butterfly",text:"",textPos:"none"},
-{id:"flower",cat:"natur",icon:"🌺",name:"Blomma",desc:"Fembladig blomma med kraftiga öppningar.",kind:"flower",text:"",textPos:"none"},
-{id:"paw",cat:"natur",icon:"🐾",name:"Hundskylt",desc:"Tassmotiv och personlig text.",kind:"paw",text:"HUNDAR VÄLKOMNA",textPos:"bottom"},
-{id:"excavator",cat:"verkstad",icon:"🚜",name:"Grävmaskin",desc:"Egen förenklad maskinsilhuett.",kind:"excavator",text:"HALLGREN ENTREPRENAD",textPos:"bottom"},
-{id:"monogram",cat:"verkstad",icon:"⚙️",name:"Kugghjulsmonogram",desc:"Två bokstäver i kugghjulsram.",kind:"gear",text:"HF",textPos:"center"},
-{id:"fire-panel",cat:"panel",icon:"🔥",name:"Eldkorgspanel",desc:"Jaktmotiv med flikar för sammanfogning.",kind:"firePanel",text:"FORRUSH",textPos:"top"},
-{id:"circle-panel",cat:"panel",icon:"⭕",name:"Cirkelpanel",desc:"Repeterande ringmönster för räcke.",kind:"circlePanel",text:"",textPos:"none"},
-{id:"forest-panel",cat:"panel",icon:"🌲",name:"Skogspanel",desc:"Granar och berg för avskärmning.",kind:"forestPanel",text:"",textPos:"none"}
-];
-
-const state={tpl:templates[0],paths:[],circles:[],rects:[],lines:[]};
-
-function renderLibrary(cat="all"){
- const g=$("templateGrid");g.innerHTML="";
- templates.filter(t=>cat==="all"||t.cat===cat).forEach((t,i)=>{
-  const el=document.createElement("button");el.className="tile "+(i===0&&cat==="all"?"primary":"");const q=t.id==="house"?"ArcDroid-test":"Experimentell";el.innerHTML=`<div><span class="libraryTag">${t.cat.toUpperCase()}</span><span class="libraryTag">${q}</span><div class="icon">${t.icon}</div></div><div><h3>${t.name}</h3><p>${t.desc}</p></div>`;
-  el.onclick=()=>openTemplate(t);g.appendChild(el);
- });
-}
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderLibrary(b.dataset.cat)});
-renderLibrary();
-
-function openTemplate(t){
- state.tpl=t;$("templateTitle").textContent=t.name;$("text").value=t.text;$("textPos").value=t.textPos;$("filename").value="torchdraft-"+t.id;
- if(t.kind==="house"){$("w").value=320;$("h").value=320;$("textSize").value=170}
- else if(t.kind==="circlePanel"||t.kind==="forestPanel"){$("w").value=900;$("h").value=450;$("textSize").value=55}
- else if(t.kind==="firePanel"){$("w").value=500;$("h").value=500;$("textSize").value=42}
- else {$("w").value=600;$("h").value=380;$("textSize").value=60}
- show("editor");draw();
-}
-$("back").onclick=()=>show("home");
-["w","h","text","fontStyle","textPos","thickness","textSize","frameT","frame","holes","holeD","minFeature"].forEach(id=>$(id).addEventListener("input",()=>{if(id==="thickness")$("thicknessNum").value=$("thickness").value;draw()}));
-$("thicknessNum").addEventListener("input",()=>{$("thickness").value=$("thicknessNum").value;draw()});
-
-const GLYPHS={
-"A":["01110","10001","10001","11111","10001","10001","10001"],"B":["11110","10001","10001","11110","10001","10001","11110"],"C":["01111","10000","10000","10000","10000","10000","01111"],"D":["11110","10001","10001","10001","10001","10001","11110"],"E":["11111","10000","10000","11110","10000","10000","11111"],"F":["11111","10000","10000","11110","10000","10000","10000"],"G":["01111","10000","10000","10111","10001","10001","01111"],"H":["10001","10001","10001","11111","10001","10001","10001"],"I":["11111","00100","00100","00100","00100","00100","11111"],"J":["00111","00010","00010","00010","10010","10010","01100"],"K":["10001","10010","10100","11000","10100","10010","10001"],"L":["10000","10000","10000","10000","10000","10000","11111"],"M":["10001","11011","10101","10101","10001","10001","10001"],"N":["10001","11001","10101","10011","10001","10001","10001"],"O":["01110","10001","10001","10001","10001","10001","01110"],"P":["11110","10001","10001","11110","10000","10000","10000"],"Q":["01110","10001","10001","10001","10101","10010","01101"],"R":["11110","10001","10001","11110","10100","10010","10001"],"S":["01111","10000","10000","01110","00001","00001","11110"],"T":["11111","00100","00100","00100","00100","00100","00100"],"U":["10001","10001","10001","10001","10001","10001","01110"],"V":["10001","10001","10001","10001","10001","01010","00100"],"W":["10001","10001","10001","10101","10101","11011","10001"],"X":["10001","10001","01010","00100","01010","10001","10001"],"Y":["10001","10001","01010","00100","00100","00100","00100"],"Z":["11111","00001","00010","00100","01000","10000","11111"],
-"0":["01110","10001","10011","10101","11001","10001","01110"],"1":["00100","01100","00100","00100","00100","00100","01110"],"2":["01110","10001","00001","00010","00100","01000","11111"],"3":["11110","00001","00001","01110","00001","00001","11110"],"4":["00010","00110","01010","10010","11111","00010","00010"],"5":["11111","10000","10000","11110","00001","00001","11110"],"6":["01110","10000","10000","11110","10001","10001","01110"],"7":["11111","00001","00010","00100","01000","01000","01000"],"8":["01110","10001","10001","01110","10001","10001","01110"],"9":["01110","10001","10001","01111","00001","00001","01110"]," ":["00000","00000","00000","00000","00000","00000","00000"],"-":["00000","00000","00000","11111","00000","00000","00000"],".":["00000","00000","00000","00000","00000","00110","00110"]
-};
-
-function clearGeo(){state.rects=[];state.circles=[];state.lines=[];state.paths=[]}
-function rect(x,y,w,h){state.rects.push({x,y,w,h})}function circle(x,y,r){state.circles.push({x,y,r})}function line(x1,y1,x2,y2){state.lines.push({x1,y1,x2,y2})}function path(points,closed=true){state.paths.push({points,closed})}
-function frameGeo(w,h,t){rect(0,0,w,t);rect(0,h-t,w,t);rect(0,t,t,h-2*t);rect(w-t,t,t,h-2*t)}
-function textGeo(text,x,y,size,style,thick,maxW){
- text=(text||"").toUpperCase().replace(/[^A-Z0-9 .-]/g," ");
- let cw=size*(style==="wide"?.72:style==="narrow"?.43:.58),ch=size,gap=cw*.16;
- const total=text.length*(cw+gap)-gap,scale=Math.min(1,maxW/Math.max(1,total)),cellW=(cw/5)*scale,cellH=(ch/7)*scale;
- const stroke=Math.max(.36,thick),fillW=cellW*stroke,fillH=cellH*stroke;
- let ox=x-(total*scale)/2;
- for(const c of text){const g=GLYPHS[c]||GLYPHS[" "];for(let r=0;r<7;r++)for(let col=0;col<5;col++)if(g[r][col]==="1"){let rx=ox+col*cellW+(cellW-fillW)/2,ry=y+r*cellH+(cellH-fillH)/2;rect(rx,ry,fillW,fillH)}ox+=(cw+gap)*scale}
-}
-function polyStar(cx,cy,r1,r2,n){let pts=[];for(let i=0;i<n*2;i++){let a=-Math.PI/2+i*Math.PI/n,r=i%2?r2:r1;pts.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r])}path(pts,true)}
-function build(){
- clearGeo();const w=+$("w").value||600,h=+$("h").value||380,t=+$("frameT").value||16,kind=state.tpl.kind;
- if($("frame").checked)frameGeo(w,h,t);
- if($("holes").checked){const r=(+$("holeD").value||8)/2,m=t*1.7;[[m,m],[w-m,m],[m,h-m],[w-m,h-m]].forEach(p=>circle(p[0],p[1],r))}
- const top=45,bottom=h-70;
- if(kind==="deer"||kind==="deerFamily"){path([[40,bottom],[95,bottom-35],[145,bottom-18],[205,bottom-70],[265,bottom-28],[330,bottom-78],[405,bottom-20],[w-45,bottom-55]],false);for(let i=0;i<3;i++){let x=110+i*105;path([[x,bottom],[x,bottom-95],[x-28,bottom-45],[x,bottom-70],[x+30,bottom-42],[x,bottom-58]],false)}ellipseDeer(w*.62,bottom-42,75,38,kind==="deerFamily");if(kind==="deerFamily")ellipseDeer(w*.35,bottom-20,48,26,false)}
- if(kind==="fish"||kind==="fishCircle"){fishShape(w*.5,h*.48,170,75);if(kind==="fishCircle")circle(w*.5,h*.47,Math.min(w,h)*.32);line(w*.18,h*.62,w*.82,h*.62)}
- if(kind==="tree"){treeShape(w*.5,h*.53,150,210)}
- if(kind==="butterfly"){butterfly(w*.5,h*.48,190,130)}
- if(kind==="flower"){flower(w*.5,h*.47,125)}
- if(kind==="paw"){paw(w*.5,h*.43,95)}
- if(kind==="excavator"){excavator(w*.5,h*.50,240,120)}
- if(kind==="gear"){gear(w*.5,h*.48,145,120,14)}
- if(kind==="firePanel"){path([[30,h-25],[30,25],[w-30,25],[w-30,h-25]],false);for(let i=0;i<3;i++){let y=70+i*120;rect(8,y,18,50);rect(w-26,y,18,50)}path([[55,h-110],[110,h-155],[165,h-120],[225,h-180],[290,h-125],[350,h-170],[445,h-105]],false);ellipseDeer(w*.58,h-115,70,36,false)}
- if(kind==="circlePanel"){for(let y=65;y<h-40;y+=70)for(let x=70;x<w-40;x+=80){circle(x+(Math.floor(y/70)%2?40:0),y,36)}}
- if(kind==="forestPanel"){for(let x=70;x<w-40;x+=75){let hh=100+(x%150);path([[x, h-25],[x,h-25-hh],[x-30,h-25-hh*.45],[x,h-25-hh*.62],[x+30,h-25-hh*.45],[x,h-25-hh*.62]],false)}}
- if(kind==="house"){/* text only */}
- if(kind==="sign"){/* text only */}
- const pos=$("textPos").value,txt=$("text").value,size=+$("textSize").value||60,sty=$("fontStyle").value,th=+$("thickness").value||.72;
- if(pos!=="none"&&txt){let y=pos==="top"?28:pos==="center"?(h-size)/2:h-size-22;textGeo(txt,w/2,y,size,sty,th,w-2*t-35)}
- return {w,h};
-}
-function ellipseDeer(cx,cy,rx,ry,antlers){path([[cx-rx,cy],[cx-rx*.55,cy-ry],[cx+rx*.3,cy-ry*.8],[cx+rx,cy],[cx+rx*.45,cy+ry*.55],[cx-rx*.45,cy+ry*.55]],true);path([[cx+rx*.55,cy-ry*.35],[cx+rx*.78,cy-ry*1.4],[cx+rx*.95,cy-ry*1.65]],false);line(cx-rx*.35,cy+ry*.45,cx-rx*.45,cy+ry*1.25);line(cx+rx*.2,cy+ry*.45,cx+rx*.25,cy+ry*1.25);if(antlers){line(cx+rx*.75,cy-ry*1.35,cx+rx*.55,cy-ry*2);line(cx+rx*.58,cy-ry*1.8,cx+rx*.35,cy-ry*2.15);line(cx+rx*.82,cy-ry*1.65,cx+rx*1.08,cy-ry*2)}}
-function fishShape(cx,cy,rx,ry){path([[cx-rx,cy],[cx-rx*.58,cy-ry],[cx+rx*.38,cy-ry*.75],[cx+rx,cy],[cx+rx*.38,cy+ry*.75],[cx-rx*.58,cy+ry],[cx-rx,cy]],true);path([[cx-rx,cy],[cx-rx*1.35,cy-ry*.8],[cx-rx*1.25,cy],[cx-rx*1.35,cy+ry*.8]],true);circle(cx+rx*.55,cy-ry*.18,5);line(cx-rx*.1,cy-ry*.65,cx+rx*.12,cy-ry*1.05);line(cx-rx*.1,cy+ry*.65,cx+rx*.12,cy+ry*1.05)}
-function treeShape(cx,cy,rx,ry){rect(cx-24,cy-20,48,ry*.62);for(let i=0;i<9;i++){let a=(-Math.PI*.9)+(i*Math.PI*.225);line(cx,cy,cx+Math.cos(a)*rx,cy+Math.sin(a)*ry*.55);line(cx+Math.cos(a)*rx*.55,cy+Math.sin(a)*ry*.3,cx+Math.cos(a+.25)*rx*.9,cy+Math.sin(a+.25)*ry*.5)}for(let i=0;i<8;i++){let a=Math.PI*.1+i*Math.PI*.12;line(cx,cy+ry*.3,cx+Math.cos(a)*rx*.8,cy+ry*.3+Math.sin(a)*ry*.45)}}
-function butterfly(cx,cy,rx,ry){path([[cx,cy],[cx-rx*.25,cy-ry*.15],[cx-rx,cy-ry],[cx-rx*.75,cy],[cx-rx*.95,cy+ry*.75],[cx-rx*.25,cy+ry*.35]],true);path([[cx,cy],[cx+rx*.25,cy-ry*.15],[cx+rx,cy-ry],[cx+rx*.75,cy],[cx+rx*.95,cy+ry*.75],[cx+rx*.25,cy+ry*.35]],true);rect(cx-8,cy-ry*.65,16,ry*1.4);line(cx-2,cy-ry*.65,cx-rx*.18,cy-ry*1.05);line(cx+2,cy-ry*.65,cx+rx*.18,cy-ry*1.05)}
-function flower(cx,cy,r){for(let i=0;i<5;i++){let a=-Math.PI/2+i*2*Math.PI/5;circle(cx+Math.cos(a)*r*.58,cy+Math.sin(a)*r*.58,r*.45)}circle(cx,cy,r*.25);line(cx,cy+r*.25,cx,cy+r*1.45)}
-function paw(cx,cy,r){circle(cx,cy+r*.15,r*.52);for(let i=0;i<4;i++){let a=Math.PI*1.05+i*.35;circle(cx+Math.cos(a)*r*.75,cy+Math.sin(a)*r*.72,r*.22)}}
-function excavator(cx,cy,rx,ry){path([[cx-rx*.95,cy+ry*.55],[cx-rx*.75,cy+ry*.2],[cx-rx*.45,cy+ry*.05],[cx-rx*.2,cy+ry*.5],[cx+rx*.45,cy+ry*.5],[cx+rx*.75,cy+ry*.18],[cx+rx*.95,cy+ry*.55]],true);rect(cx-rx*.4,cy-ry*.25,rx*.52,ry*.55);path([[cx+rx*.1,cy-ry*.2],[cx+rx*.45,cy-ry*.8],[cx+rx*.9,cy-ry*.65],[cx+rx*.55,cy-ry*.5]],false);circle(cx-rx*.55,cy+ry*.58,ry*.22);circle(cx+rx*.45,cy+ry*.58,ry*.22)}
-function gear(cx,cy,r1,r2,n){let pts=[];for(let i=0;i<n*2;i++){let a=i*Math.PI/n,rr=i%2?r2:r1;pts.push([cx+Math.cos(a)*rr,cy+Math.sin(a)*rr])}path(pts,true);circle(cx,cy,r2*.72)}
-function svgEl(tag,attrs){let s=`<${tag}`;for(const k in attrs)s+=` ${k}="${attrs[k]}"`;return s+`/>`}
-function draw(){
- const G=build(),pad=55,scale=Math.min((900-2*pad)/G.w,(560-2*pad)/G.h),ox=(900-G.w*scale)/2,oy=(560-G.h*scale)/2;
- let out=`<rect width="900" height="560" fill="#070a0e"/><rect x="${ox}" y="${oy}" width="${G.w*scale}" height="${G.h*scale}" fill="#111821" stroke="#344150"/>`;
- state.rects.forEach(o=>out+=svgEl("rect",{x:ox+o.x*scale,y:oy+o.y*scale,width:o.w*scale,height:o.h*scale,fill:"#ff7a18"}));
- state.circles.forEach(o=>out+=svgEl("circle",{cx:ox+o.x*scale,cy:oy+o.y*scale,r:o.r*scale,fill:"none",stroke:"#f4f7fa","stroke-width":"2"}));
- state.lines.forEach(o=>out+=svgEl("line",{x1:ox+o.x1*scale,y1:oy+o.y1*scale,x2:ox+o.x2*scale,y2:oy+o.y2*scale,stroke:"#f4f7fa","stroke-width":"3"}));
- state.paths.forEach(o=>out+=`<polyline points="${o.points.map(p=>`${ox+p[0]*scale},${oy+p[1]*scale}`).join(" ")}" fill="${o.closed?"none":"none"}" stroke="#f4f7fa" stroke-width="3" ${o.closed?'stroke-linejoin="round"':''}/>`);$("svg").innerHTML=out;check();
-}
-function check(){const min=+$("minFeature").value||4,th=+$("thickness").value||.72,issues=[];if(th<.52)issues.push("bokstavstjockleken är tunn");if(min<3)issues.push("minsta detalj är låg");if((+$("holeD").value||8)<4&&$("holes").checked)issues.push("monteringshålen är små");$("check").innerHTML=`<strong>Plasma Check:</strong> ${issues.length?"Kontrollera "+issues.join(", ")+".":"Inga tydliga problem hittades."}`;$("status").textContent=issues.length?"⚠ Kontrollera":"✓ Skärbar grundgeometri"}
-function pair(c,v){return`${c}\n${v}\n`}
-function dxf(){
- const G=build();let e="";const L=(x1,y1,x2,y2)=>e+=pair(0,"LINE")+pair(8,"CUT")+pair(10,x1.toFixed(4))+pair(20,(G.h-y1).toFixed(4))+pair(30,0)+pair(11,x2.toFixed(4))+pair(21,(G.h-y2).toFixed(4))+pair(31,0);const C=(x,y,r)=>e+=pair(0,"CIRCLE")+pair(8,"CUT")+pair(10,x.toFixed(4))+pair(20,(G.h-y).toFixed(4))+pair(30,0)+pair(40,r.toFixed(4));
- state.rects.forEach(o=>{L(o.x,o.y,o.x+o.w,o.y);L(o.x+o.w,o.y,o.x+o.w,o.y+o.h);L(o.x+o.w,o.y+o.h,o.x,o.y+o.h);L(o.x,o.y+o.h,o.x,o.y)});state.circles.forEach(o=>C(o.x,o.y,o.r));state.lines.forEach(o=>L(o.x1,o.y1,o.x2,o.y2));state.paths.forEach(o=>{for(let i=0;i<o.points.length-1;i++)L(...o.points[i],...o.points[i+1]);if(o.closed)L(...o.points[o.points.length-1],...o.points[0])});
- return pair(0,"SECTION")+pair(2,"HEADER")+pair(9,"$ACADVER")+pair(1,"AC1009")+pair(9,"$INSUNITS")+pair(70,4)+pair(0,"ENDSEC")+pair(0,"SECTION")+pair(2,"TABLES")+pair(0,"ENDSEC")+pair(0,"SECTION")+pair(2,"ENTITIES")+e+pair(0,"ENDSEC")+pair(0,"EOF");
-}
-function svgFile(){const G=build();let out=`<svg xmlns="http://www.w3.org/2000/svg" width="${G.w}mm" height="${G.h}mm" viewBox="0 0 ${G.w} ${G.h}">`;state.rects.forEach(o=>out+=`<rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" fill="black"/>`);state.circles.forEach(o=>out+=`<circle cx="${o.x}" cy="${o.y}" r="${o.r}" fill="none" stroke="black"/>`);state.lines.forEach(o=>out+=`<line x1="${o.x1}" y1="${o.y1}" x2="${o.x2}" y2="${o.y2}" stroke="black"/>`);state.paths.forEach(o=>out+=`<polyline points="${o.points.map(p=>p.join(",")).join(" ")}" fill="none" stroke="black"/>`);return out+"</svg>"}
-function download(name,data,type){const b=new Blob([data],{type}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),800)}
-$("exportDxf").onclick=()=>download(($("filename").value||"torchdraft")+".dxf",dxf(),"application/dxf");
-$("exportSvg").onclick=()=>download(($("filename").value||"torchdraft")+".svg",svgFile(),"image/svg+xml");
-$("savePng").onclick=()=>{const xml=new XMLSerializer().serializeToString($("svg")),img=new Image(),canvas=document.createElement("canvas");canvas.width=1800;canvas.height=1120;img.onload=()=>{canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);canvas.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=($("filename").value||"torchdraft")+".png";a.click()},"image/png")};img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(xml)};
-
-let appMode="design";
-
-function setMode(mode){
-  appMode=mode;
-  ["modeDesign","modeShop","modeProjects"].forEach(id=>$(id).classList.remove("active"));
-  if(mode==="design"){
-    $("modeDesign").classList.add("active");
-    $("heroTitle").textContent="TorchDraft Design";
-    $("heroText").textContent="Skapa riktiga skärfiler utan CAD-krångel.";
-    $("tabs").style.display="flex";
-    $("dashboard").style.display="grid";
-    $("templateGrid").style.display="grid";
-  }else if(mode==="shop"){
-    $("modeShop").classList.add("active");
-    $("heroTitle").textContent="TorchDraft Shop";
-    $("heroText").textContent="Anpassa produkter som senare kan beställas färdigtillverkade.";
-    $("dashboard").style.display="none";
-    renderShop();
-  }else{
-    $("modeProjects").classList.add("active");
-    openProjects();
-  }
-}
-$("modeDesign").onclick=()=>setMode("design");
-$("modeShop").onclick=()=>setMode("shop");
-$("modeProjects").onclick=()=>setMode("projects");
-$("quickNew").onclick=()=>{document.getElementById("tabs").scrollIntoView({behavior:"smooth"})};
-$("quick108").onclick=()=>openTemplate(templates.find(t=>t.id==="house"));
-$("quickSaved").onclick=openProjects;
-$("qualityInfo").onclick=()=>{
-  $("infoTitle").textContent="Kvalitetsnivåer";
-  $("infoBody").innerHTML="<strong>Experimentell:</strong> skapad men inte maskintestad.<br><br><strong>Kontrollerad:</strong> geometri och mått genomgångna.<br><br><strong>ArcDroid-testad:</strong> importerad och torrkörd.<br><br><strong>Skärverifierad:</strong> fysiskt utskuren med godkänt resultat.";
-  $("infoModal").classList.add("show");
-};
-$("closeInfo").onclick=()=>$("infoModal").classList.remove("show");
-
-function projectPayload(){
-  return {
-    app:"TorchDraft",version:"2.0",template:state.tpl.id,
-    settings:{
-      w:$("w").value,h:$("h").value,text:$("text").value,
-      fontStyle:$("fontStyle").value,textPos:$("textPos").value,
-      thickness:$("thickness").value,textSize:$("textSize").value,
-      frameT:$("frameT").value,frame:$("frame").checked,holes:$("holes").checked,
-      holeD:$("holeD").value,minFeature:$("minFeature").value,filename:$("filename").value
-    }
-  };
-}
-$("saveProject").onclick=()=>{
-  const key="torchdraft_v2_projects";
-  const arr=JSON.parse(localStorage.getItem(key)||"[]");
-  const p=projectPayload();p.id=Date.now();p.name=$("filename").value||state.tpl.name;p.updated=new Date().toISOString();
-  arr.unshift(p);localStorage.setItem(key,JSON.stringify(arr.slice(0,50)));
-  alert("Projektet är sparat i den här webbläsaren.");
-};
-$("exportProject").onclick=()=>download(($("filename").value||"torchdraft-projekt")+".torchdraft.json",JSON.stringify(projectPayload(),null,2),"application/json");
-
-function openProjects(){
-  const arr=JSON.parse(localStorage.getItem("torchdraft_v2_projects")||"[]");
-  const box=$("projectsList");
-  box.innerHTML=arr.length?arr.map(p=>`<div class="notice" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><strong>${p.name}</strong><br><span class="small">${p.template} · ${new Date(p.updated).toLocaleString("sv-SE")}</span></div><button class="btn secondary" data-open-project="${p.id}">Öppna</button></div>`).join(""):'<div class="notice">Inga sparade projekt ännu.</div>';
-  box.querySelectorAll("[data-open-project]").forEach(btn=>btn.onclick=()=>{
-    const p=arr.find(x=>x.id==btn.dataset.openProject); if(!p)return;
-    const tpl=templates.find(t=>t.id===p.template)||templates[0];openTemplate(tpl);
-    setTimeout(()=>{Object.entries(p.settings).forEach(([id,val])=>{const el=$(id);if(!el)return;if(el.type==="checkbox")el.checked=!!val;else el.value=val});draw()},0);
-    $("projectsModal").classList.remove("show");
-  });
-  $("projectsModal").classList.add("show");
-}
-$("closeProjects").onclick=()=>$("projectsModal").classList.remove("show");
-
-function renderShop(){
-  const g=$("templateGrid");g.style.display="grid";g.innerHTML="";
-  templates.slice(0,8).forEach(t=>{
-    const el=document.createElement("button");el.className="tile";
-    el.innerHTML=`<div><span class="libraryTag">SHOP DEMO</span><div class="icon">${t.icon}</div></div><div><h3>${t.name}</h3><p>Anpassa text och storlek. Beställningsfunktionen aktiveras senare.</p><div class="libraryTag">Från 695 kr</div></div>`;
-    el.onclick=()=>openTemplate(t);g.appendChild(el);
-  });
-}
-
-const oldOpenTemplate=openTemplate;
-openTemplate=function(t){
-  oldOpenTemplate(t);
-  $("verificationStatus").textContent=t.id==="house"?"ArcDroid-testad grund – fysisk skärning återstår":"Experimentell mall";
-};
-
-</script>
-
-<div class="modal" id="infoModal">
-  <div class="modalCard">
-    <div class="sectionTitle"><h3 id="infoTitle">Information</h3><button class="back" id="closeInfo">Stäng</button></div>
-    <div id="infoBody" class="notice"></div>
-  </div>
-</div>
-
-<div class="modal" id="projectsModal">
-  <div class="modalCard">
-    <div class="sectionTitle"><h3>Mina projekt</h3><button class="back" id="closeProjects">Stäng</button></div>
-    <div id="projectsList"></div>
-  </div>
-</div>
-
+<script type="module" src="js/app.js"></script>
 </body>
 </html>
