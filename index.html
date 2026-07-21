@@ -25,13 +25,24 @@ footer{max-width:1380px;margin:auto;padding:0 18px 25px;color:#6f7d8b;font-size:
 </head>
 <body>
 <header><div class="top">
-  <div class="brand"><div class="logo">TD</div><div><h1>TorchDraft</h1><p>Riktiga skärbara mallar för CNC-plasma.</p></div></div>
-  <div class="badge">v1.5 TEMPLATE LAB</div>
+  <div class="brand"><div class="logo">TD</div><div><h1>TorchDraft</h1><p>Design Studio och Shop för CNC-plasma.</p></div></div>
+  <div class="badge">v2.0 EARLY ACCESS</div>
 </div></header>
 
 <main>
 <section id="home" class="view active">
-  <div class="hero"><h2>Välj vad du vill skapa</h2><p>Originalmallar inspirerade av verkstads-, jakt-, fiske- och naturmotiv.</p></div>
+  <div class="hero"><h2 id="heroTitle">TorchDraft Design</h2><p id="heroText">Skapa riktiga skärfiler utan CAD-krångel.</p></div>
+  <div class="tabs">
+    <button class="tab active" id="modeDesign">Design Studio</button>
+    <button class="tab" id="modeShop">TorchDraft Shop</button>
+    <button class="tab" id="modeProjects">Mina projekt</button>
+  </div>
+  <div id="dashboard" class="grid" style="margin-bottom:16px">
+    <button class="tile primary" id="quickNew"><div class="icon">＋</div><div><h3>Nytt projekt</h3><p>Välj mall och börja designa.</p></div></button>
+    <button class="tile" id="quick108"><div class="icon">108</div><div><h3>Verifieringstest</h3><p>Husnummer 108, 300 × 300 mm.</p></div></button>
+    <button class="tile" id="quickSaved"><div class="icon">📁</div><div><h3>Sparade projekt</h3><p>Fortsätt där du slutade.</p></div></button>
+    <button class="tile" id="qualityInfo"><div class="icon">✓</div><div><h3>Kvalitetsnivåer</h3><p>Experimentell, kontrollerad och skärverifierad.</p></div></button>
+  </div>
   <div class="tabs" id="tabs">
     <button class="tab active" data-cat="all">Alla</button>
     <button class="tab" data-cat="text">Text & skylt</button>
@@ -74,6 +85,8 @@ footer{max-width:1380px;margin:auto;padding:0 18px 25px;color:#6f7d8b;font-size:
         <button id="exportDxf" class="btn primary">Exportera DXF</button>
         <button id="exportSvg" class="btn secondary">Exportera SVG</button>
         <button id="savePng" class="btn secondary">Spara förhandsbild</button>
+        <button id="saveProject" class="btn secondary">Spara projekt</button>
+        <button id="exportProject" class="btn ghost">Exportera projekt</button>
       </div>
       <div class="notice warning">Mallarna är egenritade och förenklade för plasmaskärning. Kontrollera alltid skala och skärordning i ArcDroid före tändning.</div>
     </section>
@@ -82,11 +95,12 @@ footer{max-width:1380px;margin:auto;padding:0 18px 25px;color:#6f7d8b;font-size:
       <div class="toolbar"><h3>Förhandsgranskning</h3><div id="status" class="status">✓ Skärbar grundgeometri</div></div>
       <div class="canvasWrap"><svg id="svg" class="preview" viewBox="0 0 900 560"></svg></div>
       <div id="check" class="notice"><strong>Plasma Check:</strong> Klar.</div>
+      <div class="notice"><strong>Status:</strong> <span id="verificationStatus">Experimentell mall</span></div>
     </section>
   </div>
 </section>
 </main>
-<footer>TorchDraft v1.5 · Single-file webbapp · Originalmallar, inte kopior av inskickade designer</footer>
+<footer>TorchDraft v2.0 Early Access · Design Studio + Shop</footer>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -115,7 +129,7 @@ const state={tpl:templates[0],paths:[],circles:[],rects:[],lines:[]};
 function renderLibrary(cat="all"){
  const g=$("templateGrid");g.innerHTML="";
  templates.filter(t=>cat==="all"||t.cat===cat).forEach((t,i)=>{
-  const el=document.createElement("button");el.className="tile "+(i===0&&cat==="all"?"primary":"");el.innerHTML=`<div><span class="libraryTag">${t.cat.toUpperCase()}</span><div class="icon">${t.icon}</div></div><div><h3>${t.name}</h3><p>${t.desc}</p></div>`;
+  const el=document.createElement("button");el.className="tile "+(i===0&&cat==="all"?"primary":"");const q=t.id==="house"?"ArcDroid-test":"Experimentell";el.innerHTML=`<div><span class="libraryTag">${t.cat.toUpperCase()}</span><span class="libraryTag">${q}</span><div class="icon">${t.icon}</div></div><div><h3>${t.name}</h3><p>${t.desc}</p></div>`;
   el.onclick=()=>openTemplate(t);g.appendChild(el);
  });
 }
@@ -202,6 +216,108 @@ function download(name,data,type){const b=new Blob([data],{type}),a=document.cre
 $("exportDxf").onclick=()=>download(($("filename").value||"torchdraft")+".dxf",dxf(),"application/dxf");
 $("exportSvg").onclick=()=>download(($("filename").value||"torchdraft")+".svg",svgFile(),"image/svg+xml");
 $("savePng").onclick=()=>{const xml=new XMLSerializer().serializeToString($("svg")),img=new Image(),canvas=document.createElement("canvas");canvas.width=1800;canvas.height=1120;img.onload=()=>{canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);canvas.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=($("filename").value||"torchdraft")+".png";a.click()},"image/png")};img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(xml)};
+
+let appMode="design";
+
+function setMode(mode){
+  appMode=mode;
+  ["modeDesign","modeShop","modeProjects"].forEach(id=>$(id).classList.remove("active"));
+  if(mode==="design"){
+    $("modeDesign").classList.add("active");
+    $("heroTitle").textContent="TorchDraft Design";
+    $("heroText").textContent="Skapa riktiga skärfiler utan CAD-krångel.";
+    $("tabs").style.display="flex";
+    $("dashboard").style.display="grid";
+    $("templateGrid").style.display="grid";
+  }else if(mode==="shop"){
+    $("modeShop").classList.add("active");
+    $("heroTitle").textContent="TorchDraft Shop";
+    $("heroText").textContent="Anpassa produkter som senare kan beställas färdigtillverkade.";
+    $("dashboard").style.display="none";
+    renderShop();
+  }else{
+    $("modeProjects").classList.add("active");
+    openProjects();
+  }
+}
+$("modeDesign").onclick=()=>setMode("design");
+$("modeShop").onclick=()=>setMode("shop");
+$("modeProjects").onclick=()=>setMode("projects");
+$("quickNew").onclick=()=>{document.getElementById("tabs").scrollIntoView({behavior:"smooth"})};
+$("quick108").onclick=()=>openTemplate(templates.find(t=>t.id==="house"));
+$("quickSaved").onclick=openProjects;
+$("qualityInfo").onclick=()=>{
+  $("infoTitle").textContent="Kvalitetsnivåer";
+  $("infoBody").innerHTML="<strong>Experimentell:</strong> skapad men inte maskintestad.<br><br><strong>Kontrollerad:</strong> geometri och mått genomgångna.<br><br><strong>ArcDroid-testad:</strong> importerad och torrkörd.<br><br><strong>Skärverifierad:</strong> fysiskt utskuren med godkänt resultat.";
+  $("infoModal").classList.add("show");
+};
+$("closeInfo").onclick=()=>$("infoModal").classList.remove("show");
+
+function projectPayload(){
+  return {
+    app:"TorchDraft",version:"2.0",template:state.tpl.id,
+    settings:{
+      w:$("w").value,h:$("h").value,text:$("text").value,
+      fontStyle:$("fontStyle").value,textPos:$("textPos").value,
+      thickness:$("thickness").value,textSize:$("textSize").value,
+      frameT:$("frameT").value,frame:$("frame").checked,holes:$("holes").checked,
+      holeD:$("holeD").value,minFeature:$("minFeature").value,filename:$("filename").value
+    }
+  };
+}
+$("saveProject").onclick=()=>{
+  const key="torchdraft_v2_projects";
+  const arr=JSON.parse(localStorage.getItem(key)||"[]");
+  const p=projectPayload();p.id=Date.now();p.name=$("filename").value||state.tpl.name;p.updated=new Date().toISOString();
+  arr.unshift(p);localStorage.setItem(key,JSON.stringify(arr.slice(0,50)));
+  alert("Projektet är sparat i den här webbläsaren.");
+};
+$("exportProject").onclick=()=>download(($("filename").value||"torchdraft-projekt")+".torchdraft.json",JSON.stringify(projectPayload(),null,2),"application/json");
+
+function openProjects(){
+  const arr=JSON.parse(localStorage.getItem("torchdraft_v2_projects")||"[]");
+  const box=$("projectsList");
+  box.innerHTML=arr.length?arr.map(p=>`<div class="notice" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><strong>${p.name}</strong><br><span class="small">${p.template} · ${new Date(p.updated).toLocaleString("sv-SE")}</span></div><button class="btn secondary" data-open-project="${p.id}">Öppna</button></div>`).join(""):'<div class="notice">Inga sparade projekt ännu.</div>';
+  box.querySelectorAll("[data-open-project]").forEach(btn=>btn.onclick=()=>{
+    const p=arr.find(x=>x.id==btn.dataset.openProject); if(!p)return;
+    const tpl=templates.find(t=>t.id===p.template)||templates[0];openTemplate(tpl);
+    setTimeout(()=>{Object.entries(p.settings).forEach(([id,val])=>{const el=$(id);if(!el)return;if(el.type==="checkbox")el.checked=!!val;else el.value=val});draw()},0);
+    $("projectsModal").classList.remove("show");
+  });
+  $("projectsModal").classList.add("show");
+}
+$("closeProjects").onclick=()=>$("projectsModal").classList.remove("show");
+
+function renderShop(){
+  const g=$("templateGrid");g.style.display="grid";g.innerHTML="";
+  templates.slice(0,8).forEach(t=>{
+    const el=document.createElement("button");el.className="tile";
+    el.innerHTML=`<div><span class="libraryTag">SHOP DEMO</span><div class="icon">${t.icon}</div></div><div><h3>${t.name}</h3><p>Anpassa text och storlek. Beställningsfunktionen aktiveras senare.</p><div class="libraryTag">Från 695 kr</div></div>`;
+    el.onclick=()=>openTemplate(t);g.appendChild(el);
+  });
+}
+
+const oldOpenTemplate=openTemplate;
+openTemplate=function(t){
+  oldOpenTemplate(t);
+  $("verificationStatus").textContent=t.id==="house"?"ArcDroid-testad grund – fysisk skärning återstår":"Experimentell mall";
+};
+
 </script>
+
+<div class="modal" id="infoModal">
+  <div class="modalCard">
+    <div class="sectionTitle"><h3 id="infoTitle">Information</h3><button class="back" id="closeInfo">Stäng</button></div>
+    <div id="infoBody" class="notice"></div>
+  </div>
+</div>
+
+<div class="modal" id="projectsModal">
+  <div class="modalCard">
+    <div class="sectionTitle"><h3>Mina projekt</h3><button class="back" id="closeProjects">Stäng</button></div>
+    <div id="projectsList"></div>
+  </div>
+</div>
+
 </body>
 </html>
