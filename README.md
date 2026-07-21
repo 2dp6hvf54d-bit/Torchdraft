@@ -1,28 +1,17 @@
-# TorchDraft v3.0
+# TorchDraft v4.0 Visual Test
 
-Detta är en ombyggd, modulär webbapp.
+Detta är ett visuellt test av nästa designriktning.
 
-## Struktur
-- index.html
-- css/app.css
-- js/app.js
-- js/templates.js
-- js/geometry.js
-- js/dxf.js
+## Nytt
+- Nästan svart industriell bakgrund
+- Isblå/electric-blue accent
+- Blå plasma-glöd och tekniskt rutnät
+- Egna enhetliga SVG-vektorikoner istället för emojis
+- Ikoner för husnummer, hjort, fisk, träd, fjäril, grävmaskin, kugghjul, eldkorg och panel
+- Mer CAD-lik Design Studio
+- Plasmaanimation på startsidan
+- Alla funktioner från v3.0 finns kvar
 
-## Funktioner
-- TorchDraft Design och TorchDraft Shop som separata produkter
-- Mallbibliotek med kategorier och kvalitetsstatus
-- Live Design Studio
-- DXF R12-export i millimeter
-- Sparade projekt via webbläsarens localStorage
-- Plasma Check
-- Mobilanpassad design
-
-## Installation
-Ladda upp hela innehållet i denna zip till GitHub-repots rot. Behåll mappstrukturen.
-Vercel publicerar automatiskt efter commit.
-
-## Viktigt
-Mallarna är utvecklingsmallar. Endast husnummer 108 har en särskild testgrund.
-Fysisk skärverifiering återstår.
+## Uppladdning
+Alla filer ligger platt i zip-filen och ska laddas upp till GitHub-repots rot.
+Ersätt samtliga befintliga filer med samma namn.

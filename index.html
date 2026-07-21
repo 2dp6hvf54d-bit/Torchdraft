@@ -4,21 +4,75 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#080b10">
-  <title>TorchDraft 3.0</title>
+  <title>TorchDraft 4.0 Test</title>
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
+
+<svg aria-hidden="true" width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-house" viewBox="0 0 64 64">
+      <path d="M8 30 32 10l24 20v24H40V39H24v15H8Z"/>
+      <path d="M20 28h24"/>
+    </symbol>
+    <symbol id="i-deer" viewBox="0 0 64 64">
+      <path d="M13 39c7-13 27-15 38-5l-7 12H25l-6 9-6-2 5-11Z"/>
+      <path d="M43 31c2-10 1-15-4-21m5 12 8-9m-9 4-7-9m8 22 8-3"/>
+      <path d="M27 45v12m13-12v12"/>
+    </symbol>
+    <symbol id="i-fish" viewBox="0 0 64 64">
+      <path d="M8 32c12-14 31-17 45 0-14 17-33 14-45 0Z"/>
+      <path d="m9 32-7-10v20Zm31-8 8-7m-8 23 8 7"/>
+      <circle cx="43" cy="29" r="2"/>
+    </symbol>
+    <symbol id="i-tree" viewBox="0 0 64 64">
+      <path d="M30 56h7l-1-19"/>
+      <path d="M33 38 16 50m18-13 16 13M33 34 13 37m21-5 19 5M33 27 17 17m17 9 14-10M34 22 32 7"/>
+    </symbol>
+    <symbol id="i-butterfly" viewBox="0 0 64 64">
+      <path d="M31 31C22 9 8 9 10 25c1 8 9 11 21 8Zm2 0c9-22 23-22 21-6-1 8-9 11-21 8Z"/>
+      <path d="M31 33C19 34 12 43 17 52c5 7 12 2 15-15Zm2 0c12 1 19 10 14 19-5 7-12 2-15-15Z"/>
+      <path d="M32 21v35m-1-35-8-11m10 11 8-11"/>
+    </symbol>
+    <symbol id="i-excavator" viewBox="0 0 64 64">
+      <path d="M8 45h39l9 8H11Z"/>
+      <path d="M20 42V25h20v17M25 25l5-10h12l5 10"/>
+      <path d="m42 18 12-9m-9 14 13-5m-2 0 5 10"/>
+      <circle cx="20" cy="51" r="5"/><circle cx="45" cy="51" r="5"/>
+    </symbol>
+    <symbol id="i-gear" viewBox="0 0 64 64">
+      <path d="m29 5 6 0 2 7 6 2 6-4 5 5-4 6 2 6 7 2v6l-7 2-2 6 4 6-5 5-6-4-6 2-2 7h-6l-2-7-6-2-6 4-5-5 4-6-2-6-7-2v-6l7-2 2-6-4-6 5-5 6 4 6-2Z"/>
+      <circle cx="32" cy="32" r="10"/>
+    </symbol>
+    <symbol id="i-fire" viewBox="0 0 64 64">
+      <path d="M34 7c6 12-5 15 2 24 2-7 7-9 10-13 8 12 10 22 4 31-8 13-28 13-36 0-7-11-2-24 8-32-1 9 2 13 7 16-1-10 8-15 5-26Z"/>
+    </symbol>
+    <symbol id="i-panel" viewBox="0 0 64 64">
+      <rect x="7" y="10" width="50" height="44" rx="3"/>
+      <circle cx="20" cy="23" r="7"/><circle cx="42" cy="23" r="7"/>
+      <circle cx="20" cy="42" r="7"/><circle cx="42" cy="42" r="7"/>
+    </symbol>
+    <symbol id="i-spark" viewBox="0 0 64 64">
+      <path d="m34 4-8 24h13L26 60l8-25H21Z"/>
+    </symbol>
+    <symbol id="i-shop" viewBox="0 0 64 64">
+      <path d="M12 24h40l-4 32H16Z"/><path d="M20 24c0-9 4-15 12-15s12 6 12 15"/>
+    </symbol>
+  </defs>
+</svg>
+<div class="ambient-grid"></div>
+
 <header class="topbar">
-  <a class="brand" href="#home"><span class="mark">TD</span><span><b>TorchDraft</b><small>AI Design Studio för metall</small></span></a>
-  <span class="early">V3.0 EARLY ACCESS</span>
+  <a class="brand" href="#home"><span class="mark">TD</span><span><b>TorchDraft</b><small>Plasma Design Studio</small></span></a>
+  <span class="early">V4.0 VISUAL TEST</span>
 </header>
 
 <main>
   <section id="home" class="page active">
     <div class="hero">
       <span class="eyebrow">DESIGN + SHOP</span>
-      <h1>Från idé till skärfil.</h1>
-      <p>Bygg plasmavänliga skyltar och motiv utan att kunna CAD.</p>
+      <h1>Designad för stål. Byggd för plasma.</h1>
+      <p>Mörk industridesign, isblå plasma-glöd och egna vektorikoner.</p>
       <div class="hero-actions">
         <button class="primary" data-go="studio">Öppna Design Studio</button>
         <button class="secondary" data-go="shop">Öppna Shop</button>
@@ -27,14 +81,21 @@
 
     <div class="mode-grid">
       <button class="mode-card orange" data-go="studio">
-        <span>✦</span><h2>TorchDraft Design</h2>
+        <span>✦</span><h2>TorchDraft Studio</h2>
         <p>Skapa, kontrollera och exportera DXF.</p>
       </button>
       <button class="mode-card" data-go="shop">
-        <span>◆</span><h2>TorchDraft Shop</h2>
+        <svg class="hero-icon"><use href="#i-shop"/></svg><h2>TorchDraft Shop</h2>
         <p>Anpassa produkter för framtida beställning.</p>
       </button>
     </div>
+
+    
+    <section class="visual-test">
+      <div><span class="eyebrow">VISUELLT TEST</span><h2>Industrial Ice Edition</h2>
+      <p>Den här versionen testar svart stål, isblå plasma-glöd, egna vektorikoner och en tydligare CAD-känsla.</p></div>
+      <div class="plasma-line"><span></span></div>
+    </section>
 
     <div class="section-head"><div><span class="eyebrow">FORTSÄTT</span><h2>Mina projekt</h2></div><button class="text-btn" id="clearProjects">Rensa</button></div>
     <div id="recentProjects" class="project-list"></div>
