@@ -3,157 +3,160 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#080b10">
-  <title>TorchDraft 4.0 Test</title>
+  <meta name="theme-color" content="#03070c">
+  <title>TorchDraft – Designa. Skär. Skapa.</title>
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
+  <svg aria-hidden="true" class="svg-sprite">
+    <symbol id="icon-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 3-8 8-8s8 3 8 8"/></symbol>
+    <symbol id="icon-cart" viewBox="0 0 24 24"><path d="M2 3h3l2 12h11l3-8H6"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></symbol>
+    <symbol id="icon-deer" viewBox="0 0 64 64"><path d="M14 43c8-14 28-16 40-5l-7 13H26l-6 9-7-3 6-11Z"/><path d="M45 34c2-11 1-17-4-24m5 14 9-10m-10 5-8-10m9 24 9-3M29 50v11m14-11v11"/></symbol>
+    <symbol id="icon-fish" viewBox="0 0 64 64"><path d="M8 32c13-15 33-18 48 0-15 18-35 15-48 0Z"/><path d="M9 32 2 21v22Zm34-9 8-7m-8 25 8 7"/><circle cx="46" cy="29" r="2"/></symbol>
+    <symbol id="icon-car" viewBox="0 0 64 64"><path d="M10 39 16 24h32l7 15v13H9Z"/><path d="M20 24 25 15h17l6 9"/><circle cx="19" cy="51" r="5"/><circle cx="47" cy="51" r="5"/></symbol>
+    <symbol id="icon-excavator" viewBox="0 0 64 64"><path d="M9 45h38l10 8H12Z"/><path d="M20 42V25h20v17M25 25l5-10h12l5 10"/><path d="m42 18 12-9m-9 14 13-5m-2 0 5 10"/><circle cx="20" cy="51" r="5"/><circle cx="45" cy="51" r="5"/></symbol>
+    <symbol id="icon-fire" viewBox="0 0 64 64"><path d="M34 7c6 12-5 15 2 24 2-7 7-9 10-13 8 12 10 22 4 31-8 13-28 13-36 0-7-11-2-24 8-32-1 9 2 13 7 16-1-10 8-15 5-26Z"/></symbol>
+    <symbol id="icon-house" viewBox="0 0 64 64"><path d="M8 30 32 10l24 20v25H40V39H24v16H8Z"/><path d="M20 29h24"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 64 64"><circle cx="32" cy="32" r="25"/><path d="m18 33 9 9 20-22"/></symbol>
+    <symbol id="icon-box" viewBox="0 0 64 64"><path d="m10 20 22-12 22 12v28L32 59 10 48Z"/><path d="m10 20 22 12 22-12M32 32v27"/></symbol>
+    <symbol id="icon-headset" viewBox="0 0 64 64"><path d="M10 38V31a22 22 0 0 1 44 0v7"/><path d="M10 36h10v16H10Zm34 0h10v16H44ZM44 54c-3 5-7 6-14 6"/></symbol>
+    <symbol id="icon-heart" viewBox="0 0 64 64"><path d="M32 55 9 33C-4 18 17 4 32 19 47 4 68 18 55 33Z"/></symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 21h16"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+  </svg>
 
-<svg aria-hidden="true" width="0" height="0" style="position:absolute">
-  <defs>
-    <symbol id="i-house" viewBox="0 0 64 64">
-      <path d="M8 30 32 10l24 20v24H40V39H24v15H8Z"/>
-      <path d="M20 28h24"/>
-    </symbol>
-    <symbol id="i-deer" viewBox="0 0 64 64">
-      <path d="M13 39c7-13 27-15 38-5l-7 12H25l-6 9-6-2 5-11Z"/>
-      <path d="M43 31c2-10 1-15-4-21m5 12 8-9m-9 4-7-9m8 22 8-3"/>
-      <path d="M27 45v12m13-12v12"/>
-    </symbol>
-    <symbol id="i-fish" viewBox="0 0 64 64">
-      <path d="M8 32c12-14 31-17 45 0-14 17-33 14-45 0Z"/>
-      <path d="m9 32-7-10v20Zm31-8 8-7m-8 23 8 7"/>
-      <circle cx="43" cy="29" r="2"/>
-    </symbol>
-    <symbol id="i-tree" viewBox="0 0 64 64">
-      <path d="M30 56h7l-1-19"/>
-      <path d="M33 38 16 50m18-13 16 13M33 34 13 37m21-5 19 5M33 27 17 17m17 9 14-10M34 22 32 7"/>
-    </symbol>
-    <symbol id="i-butterfly" viewBox="0 0 64 64">
-      <path d="M31 31C22 9 8 9 10 25c1 8 9 11 21 8Zm2 0c9-22 23-22 21-6-1 8-9 11-21 8Z"/>
-      <path d="M31 33C19 34 12 43 17 52c5 7 12 2 15-15Zm2 0c12 1 19 10 14 19-5 7-12 2-15-15Z"/>
-      <path d="M32 21v35m-1-35-8-11m10 11 8-11"/>
-    </symbol>
-    <symbol id="i-excavator" viewBox="0 0 64 64">
-      <path d="M8 45h39l9 8H11Z"/>
-      <path d="M20 42V25h20v17M25 25l5-10h12l5 10"/>
-      <path d="m42 18 12-9m-9 14 13-5m-2 0 5 10"/>
-      <circle cx="20" cy="51" r="5"/><circle cx="45" cy="51" r="5"/>
-    </symbol>
-    <symbol id="i-gear" viewBox="0 0 64 64">
-      <path d="m29 5 6 0 2 7 6 2 6-4 5 5-4 6 2 6 7 2v6l-7 2-2 6 4 6-5 5-6-4-6 2-2 7h-6l-2-7-6-2-6 4-5-5 4-6-2-6-7-2v-6l7-2 2-6-4-6 5-5 6 4 6-2Z"/>
-      <circle cx="32" cy="32" r="10"/>
-    </symbol>
-    <symbol id="i-fire" viewBox="0 0 64 64">
-      <path d="M34 7c6 12-5 15 2 24 2-7 7-9 10-13 8 12 10 22 4 31-8 13-28 13-36 0-7-11-2-24 8-32-1 9 2 13 7 16-1-10 8-15 5-26Z"/>
-    </symbol>
-    <symbol id="i-panel" viewBox="0 0 64 64">
-      <rect x="7" y="10" width="50" height="44" rx="3"/>
-      <circle cx="20" cy="23" r="7"/><circle cx="42" cy="23" r="7"/>
-      <circle cx="20" cy="42" r="7"/><circle cx="42" cy="42" r="7"/>
-    </symbol>
-    <symbol id="i-spark" viewBox="0 0 64 64">
-      <path d="m34 4-8 24h13L26 60l8-25H21Z"/>
-    </symbol>
-    <symbol id="i-shop" viewBox="0 0 64 64">
-      <path d="M12 24h40l-4 32H16Z"/><path d="M20 24c0-9 4-15 12-15s12 6 12 15"/>
-    </symbol>
-  </defs>
-</svg>
-<div class="ambient-grid"></div>
+  <header class="topbar">
+    <a class="brand" href="#top">
+      <span class="brand-mark"><i></i><b>TD</b></span>
+      <span class="brand-copy"><strong>TORCHDRAFT</strong><small>DESIGN. CUT. CREATE.</small></span>
+    </a>
+    <nav>
+      <a class="active" href="#studio">DESIGN STUDIO</a>
+      <a href="#inspiration">INSPIRATION</a>
+      <a href="#categories">KATEGORIER</a>
+      <a href="#projects">MINA PROJEKT</a>
+      <a href="#prices">PRISER</a>
+      <a href="#about">OM OSS</a>
+    </nav>
+    <div class="top-actions">
+      <button aria-label="Konto"><svg><use href="#icon-user"/></svg></button>
+      <button aria-label="Kundvagn" class="cart"><svg><use href="#icon-cart"/></svg><span>2</span></button>
+      <button class="menu" id="menuButton" aria-label="Meny">☰</button>
+    </div>
+  </header>
 
-<header class="topbar">
-  <a class="brand" href="#home"><span class="mark">TD</span><span><b>TorchDraft</b><small>Plasma Design Studio</small></span></a>
-  <span class="early">V4.0 VISUAL TEST</span>
-</header>
-
-<main>
-  <section id="home" class="page active">
-    <div class="hero">
-      <span class="eyebrow">DESIGN + SHOP</span>
-      <h1>Designad för stål. Byggd för plasma.</h1>
-      <p>Mörk industridesign, isblå plasma-glöd och egna vektorikoner.</p>
-      <div class="hero-actions">
-        <button class="primary" data-go="studio">Öppna Design Studio</button>
-        <button class="secondary" data-go="shop">Öppna Shop</button>
+  <main id="top">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-shade"></div>
+      <div class="hero-copy">
+        <span class="kicker">AI DESIGN STUDIO FÖR METALL</span>
+        <h1>DESIGNA.<br>SKÄR.<br><em>SKAPA.</em></h1>
+        <p>Skapa unika plåtkonstverk med vår kraftfulla designstudio. Anpassa, förhandsgranska och exportera till DXF för plasmaskärning.</p>
+        <div class="hero-buttons">
+          <a class="btn primary" href="#studio">ÖPPNA DESIGN STUDIO <svg><use href="#icon-arrow"/></svg></a>
+          <a class="btn ghost" href="#inspiration">SE INSPIRATION</a>
+        </div>
       </div>
-    </div>
-
-    <div class="mode-grid">
-      <button class="mode-card orange" data-go="studio">
-        <span>✦</span><h2>TorchDraft Studio</h2>
-        <p>Skapa, kontrollera och exportera DXF.</p>
-      </button>
-      <button class="mode-card" data-go="shop">
-        <svg class="hero-icon"><use href="#i-shop"/></svg><h2>TorchDraft Shop</h2>
-        <p>Anpassa produkter för framtida beställning.</p>
-      </button>
-    </div>
-
-    
-    <section class="visual-test">
-      <div><span class="eyebrow">VISUELLT TEST</span><h2>Industrial Ice Edition</h2>
-      <p>Den här versionen testar svart stål, isblå plasma-glöd, egna vektorikoner och en tydligare CAD-känsla.</p></div>
-      <div class="plasma-line"><span></span></div>
+      <div class="hero-stats">
+        <div><svg><use href="#icon-heart"/></svg><b>5000+</b><span>NÖJDA KUNDER</span></div>
+        <div><svg><use href="#icon-headset"/></svg><b>SNABB LEVERANS</b><span>1–3 ARBETSDAGAR</span></div>
+        <div><svg><use href="#icon-download"/></svg><b>DXF EXPORT</b><span>OPTIMERADE FILER</span></div>
+        <div><span class="flag">🇸🇪</span><b>MADE IN SWEDEN</b><span>SVENSKTILLVERKAT</span></div>
+      </div>
     </section>
 
-    <div class="section-head"><div><span class="eyebrow">FORTSÄTT</span><h2>Mina projekt</h2></div><button class="text-btn" id="clearProjects">Rensa</button></div>
-    <div id="recentProjects" class="project-list"></div>
-  </section>
+    <section id="categories" class="section">
+      <div class="section-title"><h2>KATEGORIER</h2><a href="#inspiration">VISA ALLA →</a></div>
+      <div class="category-grid">
+        <button class="category-card" data-category="Jakt & Natur"><img src="cat-jakt.jpg" alt="Kronhjort i skog"><span class="blue-icon"><svg><use href="#icon-deer"/></svg></span><h3>JAKT & NATUR</h3><p>187 designer</p></button>
+        <button class="category-card" data-category="Fiske"><img src="cat-fiske.jpg" alt="Gädda som hoppar"><span class="blue-icon"><svg><use href="#icon-fish"/></svg></span><h3>FISKE</h3><p>96 designer</p></button>
+        <button class="category-card" data-category="Garage & Fordon"><img src="cat-fordon.jpg" alt="Svart pickup framför fjäll"><span class="blue-icon"><svg><use href="#icon-car"/></svg></span><h3>GARAGE & FORDON</h3><p>143 designer</p></button>
+        <button class="category-card" data-category="Maskiner"><img src="cat-maskiner.jpg" alt="Grävmaskin"><span class="blue-icon"><svg><use href="#icon-excavator"/></svg></span><h3>MASKINER</h3><p>128 designer</p></button>
+        <button class="category-card" data-category="Eldkorgar"><img src="cat-eldkorg.jpg" alt="Eldkorg med jaktmotiv"><span class="blue-icon"><svg><use href="#icon-fire"/></svg></span><h3>ELDKORGAR</h3><p>64 designer</p></button>
+        <button class="category-card" data-category="Skyltar & Husnummer"><img src="cat-husnummer.jpg" alt="Husnummer 108"><span class="blue-icon"><svg><use href="#icon-house"/></svg></span><h3>SKYLTAR & HUSNUMMER</h3><p>73 designer</p></button>
+      </div>
+    </section>
 
-  <section id="studio" class="page">
-    <div class="page-head"><button class="back" data-go="home">←</button><div><span class="eyebrow">TORCHDRAFT DESIGN</span><h1>Välj en mall</h1></div></div>
-    <div id="filters" class="filters"></div>
-    <div id="templateGrid" class="template-grid"></div>
-  </section>
+    <section id="inspiration" class="section">
+      <div class="section-title"><h2>POPULÄRA DESIGNER</h2><a href="#studio">VISA ALLA →</a></div>
+      <div class="product-grid">
+        <button class="product-card" data-product="Hjortfamilj i skog" data-image="prod-hjortfamilj.jpg" data-price="799"><img src="prod-hjortfamilj.jpg" alt=""><div><h3>Hjortfamilj i skog</h3><span>799 kr</span><i>♡</i></div></button>
+        <button class="product-card" data-product="Älg i cirkel" data-image="prod-alg.jpg" data-price="799"><img src="prod-alg.jpg" alt=""><div><h3>Älg i cirkel</h3><span>799 kr</span><i>♡</i></div></button>
+        <button class="product-card" data-product="Gädda attack" data-image="prod-gadda.jpg" data-price="749"><img src="prod-gadda.jpg" alt=""><div><h3>Gädda attack</h3><span>749 kr</span><i>♡</i></div></button>
+        <button class="product-card" data-product="Dodge RAM Front" data-image="prod-ram.jpg" data-price="849"><img src="prod-ram.jpg" alt=""><div><h3>Dodge RAM Front</h3><span>849 kr</span><i>♡</i></div></button>
+        <button class="product-card" data-product="Örn över fjäll" data-image="prod-orn.jpg" data-price="799"><img src="prod-orn.jpg" alt=""><div><h3>Örn över fjäll</h3><span>799 kr</span><i>♡</i></div></button>
+        <button class="product-card" data-product="Husnummer Modern" data-image="prod-108.jpg" data-price="599"><img src="prod-108.jpg" alt=""><div><h3>Husnummer Modern</h3><span>599 kr</span><i>♡</i></div></button>
+      </div>
+    </section>
 
-  <section id="editor" class="page">
-    <div class="page-head"><button class="back" data-go="studio">←</button><div><span class="eyebrow">DESIGN STUDIO</span><h1 id="editorTitle">Mall</h1></div></div>
-    <div class="editor-layout">
-      <aside class="panel controls">
-        <div class="field"><label>Text</label><input id="textInput" value="108"></div>
-        <div class="two">
-          <div class="field"><label>Bredd (mm)</label><input id="widthInput" type="number" value="300"></div>
-          <div class="field"><label>Höjd (mm)</label><input id="heightInput" type="number" value="300"></div>
-        </div>
-        <div class="two">
-          <div class="field"><label>Textstorlek</label><input id="textSizeInput" type="number" value="125"></div>
-          <div class="field"><label>Stil</label><select id="fontInput"><option value="block">Block</option><option value="wide">Wide</option><option value="narrow">Narrow</option></select></div>
-        </div>
-        <div class="field"><label>Tjocklek <span id="strokeValue">72%</span></label><input id="strokeInput" type="range" min="45" max="100" value="72"></div>
-        <div class="switch"><span>Ytterkontur</span><input id="outerInput" type="checkbox" checked></div>
-        <div class="switch"><span>4 monteringshål</span><input id="holesInput" type="checkbox" checked></div>
-        <div class="two">
-          <div class="field"><label>Håldiameter</label><input id="holeInput" type="number" value="8"></div>
-          <div class="field"><label>Minsta detalj</label><input id="minInput" type="number" value="4"></div>
-        </div>
+    <section id="studio" class="studio-section">
+      <div class="studio-title"><h2>DESIGN STUDIO</h2><span>LIVE PREVIEW</span></div>
+      <div class="studio-shell">
+        <aside class="studio-tools">
+          <button class="selected"><b>T</b><span>TEXT</span></button>
+          <button><b>✣</b><span>DESIGN</span></button>
+          <button><b>□</b><span>RAM</span></button>
+          <button><b>◇</b><span>MATERIAL</span></button>
+          <button><b>◐</b><span>FÄRG</span></button>
+          <button><b>i</b><span>INFO</span></button>
+        </aside>
 
-        <div class="quality-card">
-          <b id="qualityTitle">Experimentell</b>
-          <span id="qualityText">Geometrin är skapad men inte skärverifierad.</span>
-        </div>
+        <aside class="editor-left">
+          <div class="field"><label>Rad 1</label><input id="line1" value="HALLGREN"></div>
+          <div class="field"><label>Rad 2 (valfri)</label><input id="line2" value="EST. 2024"></div>
+          <div class="field"><label>Typsnitt</label><select id="fontSelect"><option value="industrial">Industrial</option><option value="stencil">Stencil</option><option value="western">Western</option><option value="modern">Modern</option><option value="classic">Classic</option></select></div>
+          <div class="field"><label>Storlek</label><div class="number-row"><input id="fontSize" type="number" value="120"><span>mm</span><button>≡</button><button>☰</button></div></div>
+          <div class="field"><label>Bokstavsavstånd</label><input id="letterSpace" type="range" min="0" max="16" value="5"></div>
+          <button class="outline-btn" id="addText">LÄGG TILL TEXT</button>
+        </aside>
 
-        <div class="button-row">
-          <button class="primary" id="exportDxf">Exportera DXF</button>
-          <button class="secondary" id="saveProject">Spara projekt</button>
-        </div>
-      </aside>
+        <section class="preview-wrap">
+          <div class="preview-toolbar"><span>◉</span><button>3D VY</button><span class="spacer"></span><button>⛶</button><button>⌕</button><button>⊕</button></div>
+          <div class="preview-stage">
+            <img id="previewImage" src="studio-hjortfamilj.jpg" alt="Förhandsvisning av hjortfamilj">
+            <div class="preview-text">
+              <strong id="previewLine1">HALLGREN</strong>
+              <span id="previewLine2">EST. 2024</span>
+            </div>
+          </div>
+          <div class="thumbs">
+            <button class="active"><img src="prod-hjortfamilj.jpg" alt=""></button>
+            <button><img src="prod-alg.jpg" alt=""></button>
+            <button><img src="prod-gadda.jpg" alt=""></button>
+            <button><img src="prod-ram.jpg" alt=""></button>
+            <button><img src="prod-orn.jpg" alt=""></button>
+          </div>
+        </section>
 
-      <section class="panel preview-panel">
-        <div class="preview-head"><b>Förhandsvisning</b><span id="plasmaStatus" class="ok">✓ Plasma Check</span></div>
-        <svg id="preview" viewBox="0 0 900 600" aria-label="Förhandsvisning"></svg>
-        <div id="warnings" class="warning-box">Inga tydliga problem hittades.</div>
-      </section>
-    </div>
-  </section>
+        <aside class="editor-right">
+          <div class="tabs"><button class="active">INSTÄLLNINGAR</button><button>INFO</button></div>
+          <label>Storlek (mm)</label>
+          <div class="double"><div><small>Bredd</small><input id="width" type="number" value="600"></div><div><small>Höjd</small><input id="height" type="number" value="400"></div><button>🔒</button></div>
+          <div class="field"><label>Material</label><select id="material"><option>Stål 2 mm</option><option>Stål 3 mm</option><option>Corten 3 mm</option><option>Rostfritt 2 mm</option></select></div>
+          <label>Färg (visas ej i DXF)</label>
+          <div class="swatches">
+            <button data-color="#cfd4d7" style="--c:#cfd4d7"></button><button data-color="#252a2d" style="--c:#252a2d"></button><button data-color="#7b5b19" style="--c:#7b5b19"></button><button data-color="#0867b9" style="--c:#0867b9"></button><button data-color="#c78012" style="--c:#c78012"></button><button data-color="#9d2d16" style="--c:#9d2d16"></button>
+          </div>
+          <div class="field"><label>Rotation</label><div class="number-row"><input id="rotation" type="number" value="0"><span>°</span><input id="rotationRange" type="range" min="-12" max="12" value="0"></div></div>
+          <div class="field"><label>Avstånd från underkant</label><div class="number-row"><input id="bottomDistance" type="number" value="40"><span>mm</span></div></div>
+          <div class="price"><small>PRIS (inkl. moms)</small><strong id="price">799 kr</strong></div>
+          <button class="primary full" id="addCart">LÄGG I VARUKORG</button>
+          <button class="outline-btn full" id="exportDxf">EXPORTERA DXF <svg><use href="#icon-download"/></svg></button>
+        </aside>
+      </div>
+    </section>
 
-  <section id="shop" class="page">
-    <div class="page-head"><button class="back" data-go="home">←</button><div><span class="eyebrow">TORCHDRAFT SHOP</span><h1>Anpassningsbara produkter</h1></div></div>
-    <div class="shop-note">Shoppen är en design-demo. Betalning och beställning är inte aktiverat ännu.</div>
-    <div id="shopGrid" class="template-grid"></div>
-  </section>
-</main>
+    <section id="projects" class="benefits">
+      <div><svg><use href="#icon-check"/></svg><b>SÄKER BETALNING</b><span>Betala tryggt med kort, Klarna eller Swish.</span></div>
+      <div><svg><use href="#icon-box"/></svg><b>FRI FRAKT ÖVER 1500 KR</b><span>Snabb och spårbar leverans till hela Sverige.</span></div>
+      <div><svg><use href="#icon-heart"/></svg><b>NÖJDA KUNDER</b><span>Över 5000 nöjda kunder i Sverige.</span></div>
+      <div><svg><use href="#icon-headset"/></svg><b>KUNDTJÄNST</b><span>Vi hjälper dig gärna! support@torchdraft.se</span></div>
+      <div><div class="stars">★★★★★</div><b>OMDÖMEN</b><span>4,9/5 från 240+ kunder</span></div>
+    </section>
+  </main>
 
-<script type="module" src="app.js"></script>
+  <div class="toast" id="toast">Tillagt i kundvagnen</div>
+  <script src="app.js"></script>
 </body>
 </html>

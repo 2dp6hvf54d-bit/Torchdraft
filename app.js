@@ -1,20 +1,59 @@
-import {templates} from "./templates.js";
-import {buildGeometry} from "./geometry.js";
-import {makeDxf,download} from "./dxf.js";
-const $=id=>document.getElementById(id);
-let current=templates[0],geo=null,filter="Alla";
-function go(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));$(id).classList.add("active");window.scrollTo(0,0);if(id==="studio")renderTemplates();if(id==="shop")renderShop();if(id==="home")renderProjects()}
-document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
-function renderFilters(){let cats=["Alla",...new Set(templates.map(t=>t.cat))];$("filters").innerHTML=cats.map(c=>`<button class="filter ${c===filter?"active":""}" data-filter="${c}">${c}</button>`).join("");$("filters").querySelectorAll("button").forEach(b=>b.onclick=()=>{filter=b.dataset.filter;renderFilters();renderTemplates()})}
-function renderTemplates(){renderFilters();$("templateGrid").innerHTML=templates.filter(t=>filter==="Alla"||t.cat===filter).map(t=>`<button class="template-card" data-id="${t.id}"><div><span class="tag">${t.cat}</span><span class="tag">${t.status}</span><div><svg class="template-icon"><use href="#${t.icon}"/></svg></div></div><div><h3>${t.name}</h3><p>${t.desc}</p></div></button>`).join("");$("templateGrid").querySelectorAll("button").forEach(b=>b.onclick=()=>openEditor(b.dataset.id))}
-function renderShop(){$("shopGrid").innerHTML=templates.slice(0,8).map(t=>`<button class="template-card" data-id="${t.id}"><div><span class="tag">SHOP DEMO</span><div><svg class="template-icon"><use href="#${t.icon}"/></svg></div></div><div><h3>${t.name}</h3><p>Anpassa produkt. Beställning öppnas senare.</p><span class="tag">Från 695 kr</span></div></button>`).join("");$("shopGrid").querySelectorAll("button").forEach(b=>b.onclick=()=>openEditor(b.dataset.id))}
-function openEditor(id){current=templates.find(t=>t.id===id)||templates[0];$("editorTitle").textContent=current.name;$("textInput").value=current.text;$("widthInput").value=current.w;$("heightInput").value=current.h;$("textSizeInput").value=current.size;$("qualityTitle").textContent=current.status;$("qualityText").textContent=current.status==="ArcDroid-testad"?"Importerad testgrund. Fysisk skärverifiering återstår.":"Geometrin är ännu inte fysiskt skärverifierad.";go("editor");draw()}
-function settings(){return{w:$("widthInput").value,h:$("heightInput").value,text:$("textInput").value,size:$("textSizeInput").value,font:$("fontInput").value,stroke:$("strokeInput").value,outer:$("outerInput").checked,holes:$("holesInput").checked,hole:$("holeInput").value,min:$("minInput").value}}
-["textInput","widthInput","heightInput","textSizeInput","fontInput","strokeInput","outerInput","holesInput","holeInput","minInput"].forEach(id=>$(id).addEventListener("input",draw));
-function draw(){let s=settings();$("strokeValue").textContent=s.stroke+"%";geo=buildGeometry(current,s);let pad=55,sc=Math.min((900-pad*2)/geo.w,(600-pad*2)/geo.h),ox=(900-geo.w*sc)/2,oy=(600-geo.h*sc)/2,out=`<rect width="900" height="600" fill="#070a0e"/><rect x="${ox}" y="${oy}" width="${geo.w*sc}" height="${geo.h*sc}" fill="#111923" stroke="#334150"/>`;geo.rects.forEach(o=>out+=`<rect x="${ox+o.x*sc}" y="${oy+o.y*sc}" width="${o.w*sc}" height="${o.h*sc}" fill="#48cfff"/>`);geo.circles.forEach(o=>out+=`<circle cx="${ox+o.x*sc}" cy="${oy+o.y*sc}" r="${o.r*sc}" fill="none" stroke="#dff9ff" stroke-width="2"/>`);geo.lines.forEach(o=>out+=`<line x1="${ox+o.x1*sc}" y1="${oy+o.y1*sc}" x2="${ox+o.x2*sc}" y2="${oy+o.y2*sc}" stroke="#dff9ff" stroke-width="3"/>`);geo.paths.forEach(o=>out+=`<polyline points="${o.p.map(p=>`${ox+p[0]*sc},${oy+p[1]*sc}`).join(" ")}" fill="none" stroke="#dff9ff" stroke-width="3"/>`);$("preview").innerHTML=out;check(s)}
-function check(s){let w=[];if(+s.stroke<52)w.push("texten är tunn");if(+s.min<3)w.push("minsta detalj är låg");if(s.holes&&+s.hole<4)w.push("hålen är små");$("warnings").textContent=w.length?"Kontrollera: "+w.join(", ")+".":"Inga tydliga problem hittades.";$("plasmaStatus").textContent=w.length?"⚠ Kontrollera":"✓ Plasma Check";$("plasmaStatus").className=w.length?"ok bad":"ok"}
-$("exportDxf").onclick=()=>download(`torchdraft-${current.id}.dxf`,makeDxf(geo),"application/dxf");
-$("saveProject").onclick=()=>{let arr=JSON.parse(localStorage.getItem("td_projects")||"[]");arr.unshift({id:Date.now(),template:current.id,name:current.name,text:$("textInput").value,settings:settings(),updated:new Date().toISOString()});localStorage.setItem("td_projects",JSON.stringify(arr.slice(0,30)));alert("Projektet är sparat på den här enheten.")};
-function renderProjects(){let arr=JSON.parse(localStorage.getItem("td_projects")||"[]");$("recentProjects").innerHTML=arr.length?arr.slice(0,6).map(p=>`<button class="project-item" data-id="${p.id}"><span><b>${p.name}</b><small>${p.text||"Utan text"}</small></span><small>${new Date(p.updated).toLocaleDateString("sv-SE")}</small></button>`).join(""):`<div class="project-item"><span><b>Inga projekt ännu</b><small>Öppna Design Studio och skapa ditt första.</small></span></div>`;$("recentProjects").querySelectorAll("button").forEach(b=>b.onclick=()=>{let p=arr.find(x=>x.id==b.dataset.id);openEditor(p.template);setTimeout(()=>{Object.entries(p.settings).forEach(([k,v])=>{let map={w:"widthInput",h:"heightInput",text:"textInput",size:"textSizeInput",font:"fontInput",stroke:"strokeInput",outer:"outerInput",holes:"holesInput",hole:"holeInput",min:"minInput"},el=$(map[k]);if(el)el.type==="checkbox"?el.checked=v:el.value=v});draw()},0)})}
-$("clearProjects").onclick=()=>{localStorage.removeItem("td_projects");renderProjects()};
-renderProjects();
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+const line1=$("#line1"), line2=$("#line2"), previewLine1=$("#previewLine1"), previewLine2=$("#previewLine2");
+const fontSelect=$("#fontSelect"), fontSize=$("#fontSize"), letterSpace=$("#letterSpace");
+const width=$("#width"), height=$("#height"), material=$("#material"), price=$("#price");
+const rotation=$("#rotation"), rotationRange=$("#rotationRange"), bottomDistance=$("#bottomDistance");
+const previewText=$(".preview-text"), previewImage=$("#previewImage"), toast=$("#toast");
+let basePrice=799, selectedColor="#cfd4d7";
+
+function updatePreview(){
+  previewLine1.textContent=(line1.value||"DIN TEXT").toUpperCase();
+  previewLine2.textContent=(line2.value||"").toUpperCase();
+  previewText.className="preview-text "+fontSelect.value;
+  previewLine1.style.fontSize=Math.max(20,Math.min(46,+fontSize.value/3.8))+"px";
+  previewLine1.style.letterSpacing=(+letterSpace.value)+"px";
+  previewText.style.bottom=Math.max(8,Math.min(85,+bottomDistance.value/2))+"px";
+  previewText.style.transform=`translateX(-50%) rotate(${+rotation.value}deg)`;
+  previewText.style.color=selectedColor;
+  calculatePrice();
+}
+function calculatePrice(){
+  const area=(+width.value||600)*(+height.value||400)/240000;
+  const materialExtra=material.value.includes("3 mm")?100:material.value.includes("Corten")?180:material.value.includes("Rostfritt")?260:0;
+  price.textContent=Math.round(basePrice*area+materialExtra)+" kr";
+}
+[line1,line2,fontSelect,fontSize,letterSpace,width,height,material,rotation,bottomDistance].forEach(el=>el.addEventListener("input",updatePreview));
+rotationRange.addEventListener("input",()=>{rotation.value=rotationRange.value;updatePreview()});
+rotation.addEventListener("input",()=>{rotationRange.value=rotation.value;updatePreview()});
+$$(".swatches button").forEach(b=>b.addEventListener("click",()=>{$$(".swatches button").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedColor=b.dataset.color;updatePreview()}));
+
+$$(".product-card").forEach(card=>card.addEventListener("click",()=>{
+  basePrice=+card.dataset.price;
+  previewImage.src=card.dataset.image;
+  $(".studio-title h2").textContent="DESIGN STUDIO – "+card.dataset.product.toUpperCase();
+  document.querySelector("#studio").scrollIntoView({behavior:"smooth"});
+  calculatePrice();
+}));
+const thumbImages=["studio-hjortfamilj.jpg","prod-alg.jpg","prod-gadda.jpg","prod-ram.jpg","prod-orn.jpg"];
+$$(".thumbs button").forEach((b,i)=>b.addEventListener("click",()=>{$$(".thumbs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");previewImage.src=thumbImages[i]}));
+
+$("#addCart").addEventListener("click",()=>{toast.textContent=`${line1.value||"Design"} tillagd i kundvagnen`;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2200)});
+$("#addText").addEventListener("click",()=>line2.focus());
+
+function dxfLine(x1,y1,x2,y2){return `0\nLINE\n8\nCUT\n10\n${x1}\n20\n${y1}\n30\n0\n11\n${x2}\n21\n${y2}\n31\n0\n`}
+function simpleDxf(){
+  const w=+width.value||600,h=+height.value||400,m=18;
+  let e=dxfLine(0,0,w,0)+dxfLine(w,0,w,h)+dxfLine(w,h,0,h)+dxfLine(0,h,0,0);
+  // A safe geometric reference rectangle for the customizable text area.
+  e+=dxfLine(m,m,w-m,m)+dxfLine(w-m,m,w-m,m+70)+dxfLine(w-m,m+70,m,m+70)+dxfLine(m,m+70,m,m);
+  return `0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n9\n$INSUNITS\n70\n4\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n${e}0\nENDSEC\n0\nEOF\n`;
+}
+$("#exportDxf").addEventListener("click",()=>{
+  const blob=new Blob([simpleDxf()],{type:"application/dxf"}),a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download=`torchdraft-${(line1.value||"design").toLowerCase().replace(/[^a-z0-9]+/g,"-")}.dxf`;a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast.textContent="DXF skapad – kontrollera alltid i ArcDroid före skärning";toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2600);
+});
+$$(".category-card").forEach(c=>c.addEventListener("click",()=>{toast.textContent=c.dataset.category+" öppnas i nästa katalogsteg";toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1800)}));
+$("#menuButton").addEventListener("click",()=>document.body.classList.toggle("menu-open"));
+updatePreview();
