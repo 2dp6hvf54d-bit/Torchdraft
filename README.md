@@ -1,3 +1,13 @@
-# TorchDraft v6.0 Vector Library
+# TorchDraft v7.0 Composer
 
-Ny funktionell version med sex originala skärbara vektormotiv: hjort, gädda, grävmaskin, fjäll/granar, flamma och kugghjul. Motiven förhandsvisas i studion och exporteras som slutna DXF LWPOLYLINE-konturer i millimeter. Projekt kan sparas lokalt. Kontrollera alltid i ArcDroid och torrkör före skärning.
+Stor teknisk uppgradering:
+- Kombinerad DXF-export: ram + hål + skärbar text + vektormotiv i samma fil
+- 9 originalmotiv: hjort, älg, gädda, grävmaskin, fjäll/granar, flamma, kugghjul, hundtass och örn
+- SVG-export
+- Projekt export/import i JSON
+- Lokal projektsparning
+- Skärlängd, antal konturer och designpoäng
+- Motivstorlek, höjd och spegling
+- Premiumdesignen från v5 är kvar
+
+Viktigt: kontrollera alltid DXF i ArcDroid, simulera och torrkör före fysisk skärning.

@@ -8,3 +8,11 @@
 .active-toggle{min-width:48px;font-size:8px}.active-toggle.on{border-color:#168fff!important;color:#5bcfff!important}
 
 .project-buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}#motifPreview{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.motif-shape{fill:none;stroke:#58d2ff;stroke-width:3;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 5px rgba(0,145,255,.7))}.motif-cutout{fill:none;stroke:#9fe9ff;stroke-width:2;vector-effect:non-scaling-stroke}#mirrorMotif.active{border-color:#168fff;color:#5bcfff}
+#motifPreview{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#motifPreview polygon{fill:none;stroke:#55d2ff;stroke-width:2.6;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 5px rgba(0,145,255,.65))}
+#mirrorMotif.active{border-color:#168fff;color:#55d2ff}
+.manufacturing-status{margin:8px 0;padding:9px;border:1px solid #1b4259;border-radius:4px;background:#071722;display:grid;gap:3px}
+.manufacturing-status b{font-size:8px;color:#55d2ff}.manufacturing-status span{font-size:8px;color:#a1b6c4;line-height:1.4}
+.manufacturing-status.warn{border-color:#725b21}.manufacturing-status.warn b{color:#ffd166}
+.design-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin:7px 0}
+.design-metrics span{font-size:7px;color:#8ea5b5;border:1px solid #173246;padding:6px 4px;text-align:center;border-radius:3px;background:#06131c}

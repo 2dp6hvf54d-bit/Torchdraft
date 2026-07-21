@@ -142,7 +142,9 @@
           <div class="field"><label>Avstånd från underkant</label><div class="number-row"><input id="bottomDistance" type="number" value="40"><span>mm</span></div></div>
           <div class="field"><label>Ram</label><select id="frameMode"><option value="outer">Ytterram</option><option value="plate">Hel plåt med utskuren text</option><option value="none">Ingen ram</option></select></div>
           <div class="double"><div><small>Ramtjocklek</small><input id="frameThickness" type="number" value="12"></div><div><small>Hål Ø</small><input id="mountHole" type="number" value="8"></div><button id="toggleHoles" class="active-toggle">4 hål</button></div>
-          <div class="price"><small>PRIS (inkl. moms)</small><strong id="price">799 kr</strong></div>
+          <div class="manufacturing-status" id="manufacturingStatus"><b>SKÄRKONTROLL</b><span id="manufacturingText">Kontrollerar…</span></div>
+        <div class="design-metrics" id="designMetrics"><span>Konturer: –</span><span>Skärlängd: –</span><span>Poäng: –</span></div>
+        <div class="price"><small>PRIS (inkl. moms)</small><strong id="price">799 kr</strong></div>
           <button class="primary full" id="addCart">LÄGG I VARUKORG</button>
           <button class="outline-btn full" id="exportDxf">EXPORTERA RIKTIG DXF <svg><use href="#icon-download"/></svg></button>
           <button class="outline-btn full" id="exportSvg">EXPORTERA SVG</button>
@@ -164,6 +166,6 @@
   </main>
 
   <div class="toast" id="toast">Tillagt i kundvagnen</div>
-  <script src="app.js"></script><script src="motifs.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

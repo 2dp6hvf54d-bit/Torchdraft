@@ -1,155 +1,56 @@
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-const line1=$("#line1"), line2=$("#line2"), previewLine1=$("#previewLine1"), previewLine2=$("#previewLine2");
-const fontSelect=$("#fontSelect"), fontSize=$("#fontSize"), letterSpace=$("#letterSpace");
-const width=$("#width"), height=$("#height"), material=$("#material"), price=$("#price");
-const rotation=$("#rotation"), rotationRange=$("#rotationRange"), bottomDistance=$("#bottomDistance");
-const frameMode=$("#frameMode"), frameThickness=$("#frameThickness"), mountHole=$("#mountHole"), toggleHoles=$("#toggleHoles");
-const previewText=$(".preview-text"), previewImage=$("#previewImage"), toast=$("#toast");
-const manufacturingStatus=$("#manufacturingStatus"), manufacturingText=$("#manufacturingText");
-let basePrice=799, selectedColor="#cfd4d7", holesEnabled=true;
+const line1=$("#line1"),line2=$("#line2"),fontSelect=$("#fontSelect"),fontSize=$("#fontSize"),letterSpace=$("#letterSpace");
+const width=$("#width"),height=$("#height"),material=$("#material"),price=$("#price"),rotation=$("#rotation"),rotationRange=$("#rotationRange"),bottomDistance=$("#bottomDistance");
+const frameMode=$("#frameMode"),frameThickness=$("#frameThickness"),mountHole=$("#mountHole"),toggleHoles=$("#toggleHoles");
+const motifSelect=$("#motifSelect"),motifScale=$("#motifScale"),motifY=$("#motifY"),mirrorMotif=$("#mirrorMotif"),motifPreview=$("#motifPreview");
+const previewLine1=$("#previewLine1"),previewLine2=$("#previewLine2"),previewText=$(".preview-text"),previewImage=$("#previewImage"),toast=$("#toast");
+const manufacturingStatus=$("#manufacturingStatus"),manufacturingText=$("#manufacturingText"),designMetrics=$("#designMetrics");
+let basePrice=799,selectedColor="#cfd4d7",holesEnabled=true,mirror=false;
 
 const GLYPHS={
-"0":["01110","10001","10011","10101","11001","10001","01110"],
-"1":["00100","01100","00100","00100","00100","00100","01110"],
-"2":["01110","10001","00001","00010","00100","01000","11111"],
-"3":["11110","00001","00001","01110","00001","00001","11110"],
-"4":["00010","00110","01010","10010","11111","00010","00010"],
-"5":["11111","10000","10000","11110","00001","00001","11110"],
-"6":["01110","10000","10000","11110","10001","10001","01110"],
-"7":["11111","00001","00010","00100","01000","01000","01000"],
-"8":["01110","10001","10001","01110","10001","10001","01110"],
-"9":["01110","10001","10001","01111","00001","00001","01110"],
-"A":["01110","10001","10001","11111","10001","10001","10001"],
-"B":["11110","10001","10001","11110","10001","10001","11110"],
-"C":["01111","10000","10000","10000","10000","10000","01111"],
-"D":["11110","10001","10001","10001","10001","10001","11110"],
-"E":["11111","10000","10000","11110","10000","10000","11111"],
-"F":["11111","10000","10000","11110","10000","10000","10000"],
-"G":["01111","10000","10000","10111","10001","10001","01111"],
-"H":["10001","10001","10001","11111","10001","10001","10001"],
-"I":["11111","00100","00100","00100","00100","00100","11111"],
-"J":["00111","00010","00010","00010","10010","10010","01100"],
-"K":["10001","10010","10100","11000","10100","10010","10001"],
-"L":["10000","10000","10000","10000","10000","10000","11111"],
-"M":["10001","11011","10101","10101","10001","10001","10001"],
-"N":["10001","11001","10101","10011","10001","10001","10001"],
-"O":["01110","10001","10001","10001","10001","10001","01110"],
-"P":["11110","10001","10001","11110","10000","10000","10000"],
-"Q":["01110","10001","10001","10001","10101","10010","01101"],
-"R":["11110","10001","10001","11110","10100","10010","10001"],
-"S":["01111","10000","10000","01110","00001","00001","11110"],
-"T":["11111","00100","00100","00100","00100","00100","00100"],
-"U":["10001","10001","10001","10001","10001","10001","01110"],
-"V":["10001","10001","10001","10001","10001","01010","00100"],
-"W":["10001","10001","10001","10101","10101","11011","10001"],
-"X":["10001","10001","01010","00100","01010","10001","10001"],
-"Y":["10001","10001","01010","00100","00100","00100","00100"],
-"Z":["11111","00001","00010","00100","01000","10000","11111"],
-" ":["00000","00000","00000","00000","00000","00000","00000"],
-"-":["00000","00000","00000","11111","00000","00000","00000"],
-".":["00000","00000","00000","00000","00000","00110","00110"]
+"0":["01110","10001","10011","10101","11001","10001","01110"],"1":["00100","01100","00100","00100","00100","00100","01110"],"2":["01110","10001","00001","00010","00100","01000","11111"],"3":["11110","00001","00001","01110","00001","00001","11110"],"4":["00010","00110","01010","10010","11111","00010","00010"],"5":["11111","10000","10000","11110","00001","00001","11110"],"6":["01110","10000","10000","11110","10001","10001","01110"],"7":["11111","00001","00010","00100","01000","01000","01000"],"8":["01110","10001","10001","01110","10001","10001","01110"],"9":["01110","10001","10001","01111","00001","00001","01110"],
+"A":["01110","10001","10001","11111","10001","10001","10001"],"B":["11110","10001","10001","11110","10001","10001","11110"],"C":["01111","10000","10000","10000","10000","10000","01111"],"D":["11110","10001","10001","10001","10001","10001","11110"],"E":["11111","10000","10000","11110","10000","10000","11111"],"F":["11111","10000","10000","11110","10000","10000","10000"],"G":["01111","10000","10000","10111","10001","10001","01111"],"H":["10001","10001","10001","11111","10001","10001","10001"],"I":["11111","00100","00100","00100","00100","00100","11111"],"J":["00111","00010","00010","00010","10010","10010","01100"],"K":["10001","10010","10100","11000","10100","10010","10001"],"L":["10000","10000","10000","10000","10000","10000","11111"],"M":["10001","11011","10101","10101","10001","10001","10001"],"N":["10001","11001","10101","10011","10001","10001","10001"],"O":["01110","10001","10001","10001","10001","10001","01110"],"P":["11110","10001","10001","11110","10000","10000","10000"],"Q":["01110","10001","10001","10001","10101","10010","01101"],"R":["11110","10001","10001","11110","10100","10010","10001"],"S":["01111","10000","10000","01110","00001","00001","11110"],"T":["11111","00100","00100","00100","00100","00100","00100"],"U":["10001","10001","10001","10001","10001","10001","01110"],"V":["10001","10001","10001","10001","10001","01010","00100"],"W":["10001","10001","10001","10101","10101","11011","10001"],"X":["10001","10001","01010","00100","01010","10001","10001"],"Y":["10001","10001","01010","00100","00100","00100","00100"],"Z":["11111","00001","00010","00100","01000","10000","11111"]," ":["00000","00000","00000","00000","00000","00000","00000"],"-":["00000","00000","00000","11111","00000","00000","00000"],".":["00000","00000","00000","00000","00000","00110","00110"]};
+
+const MOTIFS={
+none:[],
+deer:[[[6,72],[15,52],[29,42],[47,42],[60,48],[70,42],[77,30],[84,18],[89,28],[95,14],[99,27],[94,39],[87,47],[91,55],[83,62],[72,59],[65,72],[51,78],[31,78],[17,84]],[[76,31],[70,20],[67,8],[73,16],[77,5],[80,19],[86,8],[84,26]],[[28,75],[26,98],[34,98],[38,75]],[[61,74],[62,98],[70,98],[70,70]]],
+moose:[[[8,68],[20,48],[39,42],[60,45],[72,55],[82,51],[89,40],[95,44],[92,60],[82,66],[68,63],[58,77],[34,79],[18,84]],[[82,50],[77,35],[69,28],[74,22],[83,31],[87,18],[93,24],[89,39]],[[26,77],[25,98],[33,98],[37,77]],[[58,75],[60,98],[68,98],[68,72]]],
+fish:[[[4,50],[16,34],[34,25],[59,25],[79,34],[95,50],[79,66],[58,75],[33,73],[17,64]],[[5,50],[0,28],[0,72]],[[60,26],[69,10],[77,28]],[[60,74],[69,90],[77,71]],[[77,41],[84,44],[80,50]],[[28,36],[36,50],[27,64]]],
+excavator:[[[5,72],[76,72],[94,87],[12,87]],[[25,68],[25,39],[58,39],[58,68]],[[31,39],[39,18],[56,18],[65,39]],[[57,22],[76,6],[84,12],[70,27]],[[80,11],[98,24],[92,36],[74,27]]],
+mountains:[[[0,72],[15,53],[26,62],[42,36],[55,53],[72,26],[100,71]],[[12,72],[18,44],[24,72]],[[18,44],[11,58],[18,52],[25,60],[18,44]],[[73,72],[80,39],[87,72]],[[80,39],[72,56],[80,49],[89,59],[80,39]]],
+flame:[[[48,3],[57,24],[51,40],[64,28],[78,49],[74,71],[61,89],[37,97],[17,85],[6,64],[13,42],[29,27],[29,49],[39,57],[36,34]]],
+gear:[[[50,0],[58,8],[70,5],[75,17],[88,18],[89,31],[100,38],[94,50],[100,62],[89,69],[88,82],[75,83],[70,95],[58,92],[50,100],[42,92],[30,95],[25,83],[12,82],[11,69],[0,62],[6,50],[0,38],[11,31],[12,18],[25,17],[30,5],[42,8]],[[50,30],[64,36],[70,50],[64,64],[50,70],[36,64],[30,50],[36,36]]],
+paw:[[[25,47],[18,64],[25,82],[50,91],[75,82],[82,64],[75,47],[62,40],[50,50],[38,40]],[[13,18],[7,31],[13,42],[25,37],[27,24]],[[37,9],[31,23],[38,36],[50,32],[51,17]],[[63,9],[52,18],[53,33],[65,38],[73,25]],[[87,18],[74,26],[75,40],[88,43],[95,31]]],
+eagle:[[[5,54],[20,34],[37,24],[50,38],[63,24],[80,34],[95,54],[75,48],[60,61],[50,84],[40,61],[25,48]],[[37,24],[31,8],[43,20]],[[63,24],[69,8],[57,20]]]
 };
 
-function updatePreview(){
-  previewLine1.textContent=(line1.value||"DIN TEXT").toUpperCase();
-  previewLine2.textContent=(line2.value||"").toUpperCase();
-  previewText.className="preview-text "+fontSelect.value;
-  previewLine1.style.fontSize=Math.max(20,Math.min(46,+fontSize.value/3.8))+"px";
-  previewLine1.style.letterSpacing=(+letterSpace.value)+"px";
-  previewText.style.bottom=Math.max(8,Math.min(85,+bottomDistance.value/2))+"px";
-  previewText.style.transform=`translateX(-50%) rotate(${+rotation.value}deg)`;
-  previewText.style.color=selectedColor;
-  calculatePrice(); validateManufacturing();
+function transformMotif(){
+ const polys=MOTIFS[motifSelect.value]||[],W=+width.value||600,H=+height.value||400,k=(+motifScale.value||58)/100*Math.min(W,H)/100,top=H*(+motifY.value||12)/100;
+ return polys.map(poly=>poly.map(([x,y])=>[W/2+(mirror?-(x-50):(x-50))*k,top+y*k]));
 }
-function calculatePrice(){
-  const area=(+width.value||600)*(+height.value||400)/240000;
-  const materialExtra=material.value.includes("3 mm")?100:material.value.includes("Corten")?180:material.value.includes("Rostfritt")?260:0;
-  price.textContent=Math.round(basePrice*area+materialExtra)+" kr";
-}
-[line1,line2,fontSelect,fontSize,letterSpace,width,height,material,rotation,bottomDistance,frameMode,frameThickness,mountHole].forEach(el=>el.addEventListener("input",updatePreview));
-rotationRange.addEventListener("input",()=>{rotation.value=rotationRange.value;updatePreview()});
-rotation.addEventListener("input",()=>{rotationRange.value=rotation.value;updatePreview()});
-toggleHoles.addEventListener("click",()=>{holesEnabled=!holesEnabled;toggleHoles.classList.toggle("on",holesEnabled);toggleHoles.textContent=holesEnabled?"4 hål":"Inga hål";validateManufacturing()});
-toggleHoles.classList.add("on");
+function updateMotifPreview(){const W=+width.value||600,H=+height.value||400;motifPreview.setAttribute("viewBox",`0 0 ${W} ${H}`);motifPreview.innerHTML="";transformMotif().forEach(p=>{const e=document.createElementNS("http://www.w3.org/2000/svg","polygon");e.setAttribute("points",p.map(q=>q.join(",")).join(" "));motifPreview.appendChild(e)})}
+function updatePreview(){previewLine1.textContent=(line1.value||"DIN TEXT").toUpperCase();previewLine2.textContent=(line2.value||"").toUpperCase();previewText.className="preview-text "+fontSelect.value;previewLine1.style.fontSize=Math.max(20,Math.min(46,+fontSize.value/3.8))+"px";previewLine1.style.letterSpacing=(+letterSpace.value)+"px";previewText.style.bottom=Math.max(8,Math.min(85,+bottomDistance.value/2))+"px";previewText.style.transform=`translateX(-50%) rotate(${+rotation.value}deg)`;previewText.style.color=selectedColor;updateMotifPreview();calculatePrice();validate()}
+function calculatePrice(){const area=(+width.value||600)*(+height.value||400)/240000,extra=material.value.includes("3 mm")?100:material.value.includes("Corten")?180:material.value.includes("Rostfritt")?260:0,motif=motifSelect.value==="none"?0:120;price.textContent=Math.round(basePrice*area+extra+motif)+" kr"}
+[line1,line2,fontSelect,fontSize,letterSpace,width,height,material,rotation,bottomDistance,frameMode,frameThickness,mountHole,motifSelect,motifScale,motifY].forEach(el=>el&&el.addEventListener("input",updatePreview));
+rotationRange.addEventListener("input",()=>{rotation.value=rotationRange.value;updatePreview()});rotation.addEventListener("input",()=>{rotationRange.value=rotation.value;updatePreview()});
+toggleHoles.addEventListener("click",()=>{holesEnabled=!holesEnabled;toggleHoles.classList.toggle("on",holesEnabled);toggleHoles.textContent=holesEnabled?"4 hål":"Inga hål";updatePreview()});toggleHoles.classList.add("on");
+mirrorMotif.addEventListener("click",()=>{mirror=!mirror;mirrorMotif.classList.toggle("active",mirror);updatePreview()});
 $$(".swatches button").forEach(b=>b.addEventListener("click",()=>{$$(".swatches button").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedColor=b.dataset.color;updatePreview()}));
+$$(".product-card").forEach(card=>card.addEventListener("click",()=>{basePrice=+card.dataset.price;previewImage.src=card.dataset.image;$(".studio-title h2").textContent="DESIGN STUDIO – "+card.dataset.product.toUpperCase();document.querySelector("#studio").scrollIntoView({behavior:"smooth"});calculatePrice()}));
+const thumbs=["studio-hjortfamilj.jpg","prod-alg.jpg","prod-gadda.jpg","prod-ram.jpg","prod-orn.jpg"];$$(".thumbs button").forEach((b,i)=>b.addEventListener("click",()=>{$$(".thumbs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");previewImage.src=thumbs[i]}));
+$("#addCart").addEventListener("click",()=>showToast(`${line1.value||"Design"} tillagd i kundvagnen`));$("#addText").addEventListener("click",()=>line2.focus());$$(".category-card").forEach(c=>c.addEventListener("click",()=>showToast(c.dataset.category+" öppnas i nästa katalogsteg")));$("#menuButton").addEventListener("click",()=>document.body.classList.toggle("menu-open"));
 
-$$(".product-card").forEach(card=>card.addEventListener("click",()=>{
-  basePrice=+card.dataset.price; previewImage.src=card.dataset.image;
-  $(".studio-title h2").textContent="DESIGN STUDIO – "+card.dataset.product.toUpperCase();
-  document.querySelector("#studio").scrollIntoView({behavior:"smooth"}); calculatePrice();
-}));
-const thumbImages=["studio-hjortfamilj.jpg","prod-alg.jpg","prod-gadda.jpg","prod-ram.jpg","prod-orn.jpg"];
-$$(".thumbs button").forEach((b,i)=>b.addEventListener("click",()=>{$$(".thumbs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");previewImage.src=thumbImages[i]}));
-$("#addCart").addEventListener("click",()=>showToast(`${line1.value||"Design"} tillagd i kundvagnen`));
-$("#addText").addEventListener("click",()=>line2.focus());
-$$(".category-card").forEach(c=>c.addEventListener("click",()=>showToast(c.dataset.category+" öppnas i nästa katalogsteg")));
-$("#menuButton").addEventListener("click",()=>document.body.classList.toggle("menu-open"));
-
-function validateManufacturing(){
-  const warnings=[];
-  const w=+width.value||0,h=+height.value||0,fs=+fontSize.value||0,ft=+frameThickness.value||0,hd=+mountHole.value||0;
-  if(w<100||h<80) warnings.push("mycket liten skylt");
-  if(fs<25) warnings.push("texten kan bli för liten");
-  if(ft<5 && frameMode.value!=="none") warnings.push("ramen är tunnare än 5 mm");
-  if(holesEnabled && hd<5) warnings.push("monteringshålen är små");
-  if(Math.abs(+rotation.value)>0.01) warnings.push("DXF-textrotation stöds inte ännu");
-  if(fontSelect.value!=="cut-stencil") warnings.push("DXF använder Cut Stencil oavsett valt förhandsvisningstypsnitt");
-  manufacturingStatus.classList.toggle("warn",warnings.length>0);
-  manufacturingText.textContent=warnings.length?warnings.join(" • "):"Slutna konturer, millimeterenheter och inga lösa bokstavsöar.";
-}
-
-function geometry(){
-  const W=+width.value||600,H=+height.value||400,frame=+frameThickness.value||12,holeD=+mountHole.value||8;
-  const rects=[],circles=[];
-  if(frameMode.value==="outer"){
-    rects.push({x:0,y:0,w:W,h:frame},{x:0,y:H-frame,w:W,h:frame},{x:0,y:frame,w:frame,h:H-2*frame},{x:W-frame,y:frame,w:frame,h:H-2*frame});
-  } else if(frameMode.value==="plate"){
-    rects.push({x:0,y:0,w:W,h:H,plate:true});
-  }
-  if(holesEnabled){
-    const m=Math.max(18,holeD*1.5);
-    [[m,m],[W-m,m],[m,H-m],[W-m,H-m]].forEach(([x,y])=>circles.push({x,y,r:holeD/2}));
-  }
-  const textRects=[];
-  addTextRects(textRects,(line1.value||"108").toUpperCase(),W/2,H*0.35,+fontSize.value||120,+letterSpace.value||5);
-  if(line2.value.trim()) addTextRects(textRects,line2.value.toUpperCase(),W/2,H*0.68,(+fontSize.value||120)*0.45,(+letterSpace.value||5)*0.7);
-  return {W,H,rects,circles,textRects,plate:frameMode.value==="plate"};
-}
-function addTextRects(out,text,cx,y,size,space){
-  text=text.replace(/[^A-Z0-9 .-]/g," ");
-  const cw=size*.58, ch=size/7, gap=Math.max(2,space), total=text.length*cw+(text.length-1)*gap;
-  const scale=Math.min(1,(+width.value-50)/Math.max(total,1)); let ox=cx-total*scale/2;
-  for(const c of text){
-    const glyph=GLYPHS[c]||GLYPHS[" "];
-    for(let r=0;r<7;r++)for(let col=0;col<5;col++)if(glyph[r][col]==="1"){
-      const cellW=cw/5*scale, cellH=ch*scale, inset=Math.min(cellW,cellH)*.12;
-      out.push({x:ox+col*cellW+inset,y:y+r*cellH+inset,w:cellW-2*inset,h:cellH-2*inset});
-    }
-    ox+=(cw+gap)*scale;
-  }
-}
-
-function pair(c,v){return`${c}\n${v}\n`}
-function dxfLine(H,x1,y1,x2,y2){return pair(0,"LINE")+pair(8,"CUT")+pair(10,x1.toFixed(4))+pair(20,(H-y1).toFixed(4))+pair(30,0)+pair(11,x2.toFixed(4))+pair(21,(H-y2).toFixed(4))+pair(31,0)}
-function rectLines(H,o){return dxfLine(H,o.x,o.y,o.x+o.w,o.y)+dxfLine(H,o.x+o.w,o.y,o.x+o.w,o.y+o.h)+dxfLine(H,o.x+o.w,o.y+o.h,o.x,o.y+o.h)+dxfLine(H,o.x,o.y+o.h,o.x,o.y)}
-function makeDxf(){
-  const g=geometry(); let e="";
-  if(g.plate) e+=rectLines(g.H,{x:0,y:0,w:g.W,h:g.H});
-  else g.rects.forEach(o=>e+=rectLines(g.H,o));
-  g.textRects.forEach(o=>e+=rectLines(g.H,o));
-  g.circles.forEach(o=>e+=pair(0,"CIRCLE")+pair(8,"CUT")+pair(10,o.x.toFixed(4))+pair(20,(g.H-o.y).toFixed(4))+pair(30,0)+pair(40,o.r.toFixed(4)));
-  return pair(0,"SECTION")+pair(2,"HEADER")+pair(9,"$ACADVER")+pair(1,"AC1009")+pair(9,"$INSUNITS")+pair(70,4)+pair(0,"ENDSEC")+pair(0,"SECTION")+pair(2,"ENTITIES")+e+pair(0,"ENDSEC")+pair(0,"EOF");
-}
-function makeSvg(){
-  const g=geometry(), parts=[`<svg xmlns="http://www.w3.org/2000/svg" width="${g.W}mm" height="${g.H}mm" viewBox="0 0 ${g.W} ${g.H}">`];
-  const addRect=o=>parts.push(`<rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" fill="none" stroke="black" stroke-width="0.5"/>`);
-  if(g.plate)addRect({x:0,y:0,w:g.W,h:g.H}); else g.rects.forEach(addRect);
-  g.textRects.forEach(addRect); g.circles.forEach(o=>parts.push(`<circle cx="${o.x}" cy="${o.y}" r="${o.r}" fill="none" stroke="black" stroke-width="0.5"/>`));
-  parts.push("</svg>"); return parts.join("\n");
-}
-function save(name,data,type){const blob=new Blob([data],{type}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-function slug(){return (line1.value||"design").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
-$("#exportDxf").addEventListener("click",()=>{save(`torchdraft-${slug()}.dxf`,makeDxf(),"application/dxf");showToast("Riktig DXF skapad – torrkör alltid i ArcDroid först")});
-$("#exportSvg").addEventListener("click",()=>{save(`torchdraft-${slug()}.svg`,makeSvg(),"image/svg+xml");showToast("SVG skapad")});
-function showToast(text){toast.textContent=text;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2200)}
-updatePreview();
+function addTextRects(out,text,cx,y,size,space){text=text.replace(/[^A-Z0-9 .-]/g," ");const cw=size*.58,ch=size/7,gap=Math.max(2,space),total=text.length*cw+(text.length-1)*gap,scale=Math.min(1,(+width.value-50)/Math.max(total,1));let ox=cx-total*scale/2;for(const c of text){const glyph=GLYPHS[c]||GLYPHS[" "];for(let r=0;r<7;r++)for(let col=0;col<5;col++)if(glyph[r][col]==="1"){const cellW=cw/5*scale,cellH=ch*scale,inset=Math.min(cellW,cellH)*.12;out.push({x:ox+col*cellW+inset,y:y+r*cellH+inset,w:cellW-2*inset,h:cellH-2*inset})}ox+=(cw+gap)*scale}}
+function geometry(){const W=+width.value||600,H=+height.value||400,frame=+frameThickness.value||12,holeD=+mountHole.value||8,rects=[],circles=[],textRects=[];if(frameMode.value==="outer")rects.push({x:0,y:0,w:W,h:frame},{x:0,y:H-frame,w:W,h:frame},{x:0,y:frame,w:frame,h:H-2*frame},{x:W-frame,y:frame,w:frame,h:H-2*frame});else if(frameMode.value==="plate")rects.push({x:0,y:0,w:W,h:H,plate:true});if(holesEnabled){const m=Math.max(18,holeD*1.5);[[m,m],[W-m,m],[m,H-m],[W-m,H-m]].forEach(([x,y])=>circles.push({x,y,r:holeD/2}))}addTextRects(textRects,(line1.value||"108").toUpperCase(),W/2,H*.62,+fontSize.value||120,+letterSpace.value||5);if(line2.value.trim())addTextRects(textRects,line2.value.toUpperCase(),W/2,H*.82,(+fontSize.value||120)*.45,(+letterSpace.value||5)*.7);return{W,H,rects,circles,textRects,polylines:transformMotif(),plate:frameMode.value==="plate"}}
+function distance(a,b){return Math.hypot(b[0]-a[0],b[1]-a[1])}
+function metrics(g){let contours=g.rects.length+g.circles.length+g.textRects.length+g.polylines.length,len=0;[...g.rects,...g.textRects].forEach(o=>len+=2*(o.w+o.h));g.circles.forEach(o=>len+=2*Math.PI*o.r);g.polylines.forEach(p=>{for(let i=0;i<p.length;i++)len+=distance(p[i],p[(i+1)%p.length])});return{contours,len}}
+function validate(){const g=geometry(),warn=[];if(g.W<100||g.H<80)warn.push("mycket liten skylt");if(+fontSize.value<25)warn.push("liten text");if(+frameThickness.value<5&&frameMode.value!=="none")warn.push("tunn ram");if(holesEnabled&&+mountHole.value<5)warn.push("små hål");if(Math.abs(+rotation.value)>.01)warn.push("rotation visas men exporteras inte");g.polylines.flat().forEach(([x,y])=>{if(x<0||y<0||x>g.W||y>g.H)warn.push("motiv utanför plåt")});const m=metrics(g),score=Math.max(20,100-warn.length*14-(m.contours>180?10:0));manufacturingStatus.classList.toggle("warn",warn.length>0);manufacturingText.textContent=warn.length?[...new Set(warn)].join(" • "):"Slutna konturer, millimeter och kombinerad text + motiv.";designMetrics.innerHTML=`<span>Konturer: ${m.contours}</span><span>Skärlängd: ${(m.len/1000).toFixed(2)} m</span><span>Poäng: ${score}/100</span>`}
+function pair(c,v){return`${c}\n${v}\n`}function line(H,x1,y1,x2,y2){return pair(0,"LINE")+pair(8,"CUT")+pair(10,x1.toFixed(4))+pair(20,(H-y1).toFixed(4))+pair(30,0)+pair(11,x2.toFixed(4))+pair(21,(H-y2).toFixed(4))+pair(31,0)}function rectDxf(H,o){return line(H,o.x,o.y,o.x+o.w,o.y)+line(H,o.x+o.w,o.y,o.x+o.w,o.y+o.h)+line(H,o.x+o.w,o.y+o.h,o.x,o.y+o.h)+line(H,o.x,o.y+o.h,o.x,o.y)}function polyDxf(H,p){let s=pair(0,"LWPOLYLINE")+pair(8,"CUT")+pair(90,p.length)+pair(70,1);p.forEach(([x,y])=>s+=pair(10,x.toFixed(4))+pair(20,(H-y).toFixed(4)));return s}
+function makeDxf(){const g=geometry();let e="";if(g.plate)e+=rectDxf(g.H,{x:0,y:0,w:g.W,h:g.H});else g.rects.forEach(o=>e+=rectDxf(g.H,o));g.textRects.forEach(o=>e+=rectDxf(g.H,o));g.polylines.forEach(p=>e+=polyDxf(g.H,p));g.circles.forEach(o=>e+=pair(0,"CIRCLE")+pair(8,"CUT")+pair(10,o.x.toFixed(4))+pair(20,(g.H-o.y).toFixed(4))+pair(30,0)+pair(40,o.r.toFixed(4)));return pair(0,"SECTION")+pair(2,"HEADER")+pair(9,"$ACADVER")+pair(1,"AC1015")+pair(9,"$INSUNITS")+pair(70,4)+pair(0,"ENDSEC")+pair(0,"SECTION")+pair(2,"ENTITIES")+e+pair(0,"ENDSEC")+pair(0,"EOF")}
+function makeSvg(){const g=geometry(),p=[`<svg xmlns="http://www.w3.org/2000/svg" width="${g.W}mm" height="${g.H}mm" viewBox="0 0 ${g.W} ${g.H}">`],r=o=>p.push(`<rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" fill="none" stroke="black"/>`);if(g.plate)r({x:0,y:0,w:g.W,h:g.H});else g.rects.forEach(r);g.textRects.forEach(r);g.polylines.forEach(q=>p.push(`<polygon points="${q.map(x=>x.join(",")).join(" ")}" fill="none" stroke="black"/>`));g.circles.forEach(o=>p.push(`<circle cx="${o.x}" cy="${o.y}" r="${o.r}" fill="none" stroke="black"/>`));p.push("</svg>");return p.join("\n")}
+function project(){return{version:"7.0",line1:line1.value,line2:line2.value,font:fontSelect.value,fontSize:fontSize.value,letterSpace:letterSpace.value,width:width.value,height:height.value,material:material.value,rotation:rotation.value,bottom:bottomDistance.value,frame:frameMode.value,frameThickness:frameThickness.value,hole:mountHole.value,holesEnabled,motif:motifSelect.value,motifScale:motifScale.value,motifY:motifY.value,mirror,color:selectedColor}}
+function applyProject(d){if(!d)return;const map={line1,line2,font:fontSelect,fontSize,letterSpace,width,height,material,rotation,bottom:bottomDistance,frame:frameMode,frameThickness,hole:mountHole,motif:motifSelect,motifScale,motifY};Object.entries(map).forEach(([k,e])=>{if(d[k]!=null)e.value=d[k]});holesEnabled=d.holesEnabled!==false;mirror=!!d.mirror;selectedColor=d.color||selectedColor;rotationRange.value=rotation.value;toggleHoles.textContent=holesEnabled?"4 hål":"Inga hål";toggleHoles.classList.toggle("on",holesEnabled);mirrorMotif.classList.toggle("active",mirror);updatePreview()}
+function save(name,data,type){const b=new Blob([data],{type}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),800)}function slug(){return(line1.value||"design").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+$("#exportDxf").addEventListener("click",()=>{save(`torchdraft-${slug()}.dxf`,makeDxf(),"application/dxf");showToast("Kombinerad DXF skapad")});$("#exportSvg").addEventListener("click",()=>{save(`torchdraft-${slug()}.svg`,makeSvg(),"image/svg+xml");showToast("SVG skapad")});$("#exportProject").addEventListener("click",()=>save(`torchdraft-${slug()}.torchdraft.json`,JSON.stringify(project(),null,2),"application/json"));$("#importProject").addEventListener("click",()=>$("#importProjectFile").click());$("#importProjectFile").addEventListener("change",async e=>{try{applyProject(JSON.parse(await e.target.files[0].text()));showToast("Projekt importerat")}catch{showToast("Projektfilen kunde inte läsas")}e.target.value=""});
+const saveBtn=$("#saveProject"),loadBtn=$("#loadProject");if(saveBtn)saveBtn.addEventListener("click",()=>{localStorage.setItem("torchdraft-v7",JSON.stringify(project()));showToast("Projekt sparat")});if(loadBtn)loadBtn.addEventListener("click",()=>{applyProject(JSON.parse(localStorage.getItem("torchdraft-v7")||"null"));showToast("Projekt laddat")});
+function showToast(t){toast.textContent=t;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2000)}updatePreview();
