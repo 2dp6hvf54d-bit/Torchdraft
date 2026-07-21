@@ -34,13 +34,13 @@
       <a class="active" href="#studio">DESIGN STUDIO</a>
       <a href="#inspiration">INSPIRATION</a>
       <a href="#categories">KATEGORIER</a>
-      <a href="#projects">MINA PROJEKT</a>
-      <a href="#prices">PRISER</a>
-      <a href="#about">OM OSS</a>
+      <a href="#projects" id="projectsNav">MINA PROJEKT</a>
+      <a href="#prices" id="pricesNav">PRISER</a>
+      <a href="#about" id="aboutNav">OM OSS</a>
     </nav>
     <div class="top-actions">
-      <button aria-label="Konto"><svg><use href="#icon-user"/></svg></button>
-      <button aria-label="Kundvagn" class="cart"><svg><use href="#icon-cart"/></svg><span>2</span></button>
+      <button aria-label="Konto" id="accountButton"><svg><use href="#icon-user"/></svg></button>
+      <button aria-label="Kundvagn" class="cart" id="cartButton"><svg><use href="#icon-cart"/></svg><span id="cartCount">0</span></button>
       <button class="menu" id="menuButton" aria-label="Meny">☰</button>
     </div>
   </header>
@@ -94,12 +94,12 @@
       <div class="studio-title"><h2>DESIGN STUDIO</h2><span>LIVE PREVIEW</span></div>
       <div class="studio-shell">
         <aside class="studio-tools">
-          <button class="selected"><b>T</b><span>TEXT</span></button>
-          <button><b>✣</b><span>DESIGN</span></button>
-          <button><b>□</b><span>RAM</span></button>
-          <button><b>◇</b><span>MATERIAL</span></button>
-          <button><b>◐</b><span>FÄRG</span></button>
-          <button><b>i</b><span>INFO</span></button>
+          <button class="selected studio-tool" data-tool="text"><b>T</b><span>TEXT</span></button>
+          <button class="studio-tool" data-tool="design"><b>✣</b><span>DESIGN</span></button>
+          <button class="studio-tool" data-tool="frame"><b>□</b><span>RAM</span></button>
+          <button class="studio-tool" data-tool="material"><b>◇</b><span>MATERIAL</span></button>
+          <button class="studio-tool" data-tool="color"><b>◐</b><span>FÄRG</span></button>
+          <button class="studio-tool" data-tool="info"><b>i</b><span>INFO</span></button>
         </aside>
 
         <aside class="editor-left">
@@ -112,7 +112,7 @@
         </aside>
 
         <section class="preview-wrap">
-          <div class="preview-toolbar"><span>◉</span><button>3D VY</button><span class="spacer"></span><button>⛶</button><button>⌕</button><button>⊕</button></div>
+          <div class="preview-toolbar"><span>◉</span><button id="view3dButton">3D VY</button><span class="spacer"></span><button id="fullscreenButton">⛶</button><button id="zoomOutButton">−</button><button id="zoomInButton">＋</button></div>
           <div class="preview-stage">
             <img id="previewImage" src="studio-hjortfamilj.jpg" alt="Förhandsvisning av hjortfamilj"><svg id="motifPreview" viewBox="0 0 600 400"></svg>
             <div class="preview-text">
@@ -157,13 +157,82 @@
     </section>
 
     <section id="projects" class="benefits">
-      <div><svg><use href="#icon-check"/></svg><b>SÄKER BETALNING</b><span>Betala tryggt med kort, Klarna eller Swish.</span></div>
-      <div><svg><use href="#icon-box"/></svg><b>FRI FRAKT ÖVER 1500 KR</b><span>Snabb och spårbar leverans till hela Sverige.</span></div>
-      <div><svg><use href="#icon-heart"/></svg><b>NÖJDA KUNDER</b><span>Över 5000 nöjda kunder i Sverige.</span></div>
-      <div><svg><use href="#icon-headset"/></svg><b>KUNDTJÄNST</b><span>Vi hjälper dig gärna! support@torchdraft.se</span></div>
-      <div><div class="stars">★★★★★</div><b>OMDÖMEN</b><span>4,9/5 från 240+ kunder</span></div>
+      <button class="benefit-action" id="paymentInfo"><svg><use href="#icon-check"/></svg><b>SÄKER BETALNING</b><span>Se betalningsalternativ</span></button>
+      <button class="benefit-action" id="shippingInfo"><svg><use href="#icon-box"/></svg><b>FRI FRAKT ÖVER 1500 KR</b><span>Se leveransinformation</span></button>
+      <button class="benefit-action" id="customerGallery"><svg><use href="#icon-heart"/></svg><b>KUNDBILDER</b><span>Se inspirationsgalleri</span></button>
+      <button class="benefit-action" id="supportButton"><svg><use href="#icon-headset"/></svg><b>KUNDTJÄNST</b><span>Kontakta oss</span></button>
+      <button class="benefit-action" id="reviewButton"><div class="stars">★★★★★</div><b>LÄMNA OMDÖME</b><span>Läs och skriv omdömen</span></button>
     </section>
   </main>
+
+
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="drawer" id="cartDrawer" aria-hidden="true">
+    <div class="drawer-head"><h2>KUNDVAGN</h2><button data-close>×</button></div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-summary">
+      <div><span>Summa</span><strong id="cartTotal">0 kr</strong></div>
+      <button class="primary full" id="checkoutButton">GÅ TILL KASSAN</button>
+      <button class="outline-btn full" id="clearCart">TÖM KUNDVAGN</button>
+    </div>
+  </aside>
+
+  <aside class="drawer" id="accountDrawer" aria-hidden="true">
+    <div class="drawer-head"><h2>MITT KONTO</h2><button data-close>×</button></div>
+    <div class="account-card"><b>Early Access</b><span>Projekt sparas lokalt på den här enheten.</span></div>
+    <button class="drawer-link" id="accountProjects">Mina projekt</button>
+    <button class="drawer-link" id="accountFavorites">Favoriter</button>
+    <button class="drawer-link" id="accountOrders">Beställningar</button>
+    <button class="drawer-link" id="accountDownloads">Mina DXF-filer</button>
+  </aside>
+
+  <section class="modal" id="infoModal">
+    <div class="modal-card">
+      <div class="drawer-head"><h2 id="infoModalTitle">INFORMATION</h2><button data-close>×</button></div>
+      <div id="infoModalBody" class="modal-body"></div>
+    </div>
+  </section>
+
+  <section class="modal" id="supportModal">
+    <div class="modal-card">
+      <div class="drawer-head"><h2>KUNDTJÄNST</h2><button data-close>×</button></div>
+      <form id="supportForm" class="form-stack">
+        <label>Namn<input id="supportName" required></label>
+        <label>E-post<input id="supportEmail" type="email" required></label>
+        <label>Ämne<select id="supportSubject"><option>Fråga om Design Studio</option><option>Problem med DXF</option><option>Beställning</option><option>Övrigt</option></select></label>
+        <label>Meddelande<textarea id="supportMessage" rows="5" required></textarea></label>
+        <button class="primary full" type="submit">SKAPA SUPPORTÄRENDE</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="modal" id="reviewModal">
+    <div class="modal-card">
+      <div class="drawer-head"><h2>OMDÖMEN</h2><button data-close>×</button></div>
+      <div id="reviewList" class="review-list"></div>
+      <form id="reviewForm" class="form-stack">
+        <label>Ditt namn<input id="reviewName" required></label>
+        <label>Betyg<select id="reviewRating"><option value="5">★★★★★</option><option value="4">★★★★</option><option value="3">★★★</option><option value="2">★★</option><option value="1">★</option></select></label>
+        <label>Omdöme<textarea id="reviewText" rows="4" required></textarea></label>
+        <button class="primary full" type="submit">PUBLICERA OMDÖME</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="modal" id="checkoutModal">
+    <div class="modal-card">
+      <div class="drawer-head"><h2>KASSA – DEMO</h2><button data-close>×</button></div>
+      <form id="checkoutForm" class="form-stack">
+        <label>Namn<input id="checkoutName" required></label>
+        <label>E-post<input id="checkoutEmail" type="email" required></label>
+        <label>Leveranssätt<select><option>Spårbar frakt</option><option>Hämtas i verkstad</option></select></label>
+        <label>Betalning<select><option>Swish – demo</option><option>Kort – demo</option><option>Faktura – demo</option></select></label>
+        <div class="checkout-warning">Ingen riktig betalning genomförs i Early Access.</div>
+        <button class="primary full" type="submit">SKAPA TESTORDER</button>
+      </form>
+    </div>
+  </section>
 
   <div class="toast" id="toast">Tillagt i kundvagnen</div>
   <script src="app.js"></script>

@@ -54,3 +54,56 @@ function save(name,data,type){const b=new Blob([data],{type}),a=document.createE
 $("#exportDxf").addEventListener("click",()=>{save(`torchdraft-${slug()}.dxf`,makeDxf(),"application/dxf");showToast("Kombinerad DXF skapad")});$("#exportSvg").addEventListener("click",()=>{save(`torchdraft-${slug()}.svg`,makeSvg(),"image/svg+xml");showToast("SVG skapad")});$("#exportProject").addEventListener("click",()=>save(`torchdraft-${slug()}.torchdraft.json`,JSON.stringify(project(),null,2),"application/json"));$("#importProject").addEventListener("click",()=>$("#importProjectFile").click());$("#importProjectFile").addEventListener("change",async e=>{try{applyProject(JSON.parse(await e.target.files[0].text()));showToast("Projekt importerat")}catch{showToast("Projektfilen kunde inte läsas")}e.target.value=""});
 const saveBtn=$("#saveProject"),loadBtn=$("#loadProject");if(saveBtn)saveBtn.addEventListener("click",()=>{localStorage.setItem("torchdraft-v7",JSON.stringify(project()));showToast("Projekt sparat")});if(loadBtn)loadBtn.addEventListener("click",()=>{applyProject(JSON.parse(localStorage.getItem("torchdraft-v7")||"null"));showToast("Projekt laddat")});
 function showToast(t){toast.textContent=t;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2000)}updatePreview();
+
+// ----- TorchDraft v8 interactivity -----
+const cartButton=$("#cartButton"),accountButton=$("#accountButton"),cartDrawer=$("#cartDrawer"),accountDrawer=$("#accountDrawer"),overlay=$("#overlay");
+const cartItemsEl=$("#cartItems"),cartTotalEl=$("#cartTotal"),cartCountEl=$("#cartCount");
+let cart=JSON.parse(localStorage.getItem("torchdraft-cart")||"[]");
+const defaultReviews=[
+ {name:"Anders",rating:5,text:"Mycket enkel studio och snygg förhandsvisning."},
+ {name:"Maria",rating:5,text:"Kul att kunna göra en personlig skylt direkt i mobilen."}
+];
+let reviews=JSON.parse(localStorage.getItem("torchdraft-reviews")||JSON.stringify(defaultReviews));
+function openPanel(el){overlay.classList.add("show");el.classList.add("show");el.setAttribute("aria-hidden","false")}
+function closePanels(){overlay.classList.remove("show");$$(".drawer,.modal").forEach(x=>{x.classList.remove("show");x.setAttribute("aria-hidden","true")})}
+overlay.addEventListener("click",closePanels);$$("[data-close]").forEach(b=>b.addEventListener("click",closePanels));
+cartButton.addEventListener("click",()=>{renderCart();openPanel(cartDrawer)});
+accountButton.addEventListener("click",()=>openPanel(accountDrawer));
+function saveCart(){localStorage.setItem("torchdraft-cart",JSON.stringify(cart));renderCart()}
+function renderCart(){
+ cartCountEl.textContent=cart.reduce((s,x)=>s+x.qty,0);
+ cartItemsEl.innerHTML=cart.length?cart.map((x,i)=>`<div class="cart-item"><img src="${x.image}"><div><b>${x.name}</b><span>${x.details}</span><strong>${x.price} kr × ${x.qty}</strong></div><button data-remove="${i}">×</button></div>`).join(""):'<div class="empty-state">Kundvagnen är tom.</div>';
+ cartTotalEl.textContent=cart.reduce((s,x)=>s+x.price*x.qty,0)+" kr";
+ cartItemsEl.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{cart.splice(+b.dataset.remove,1);saveCart()});
+}
+$("#addCart").onclick=()=>{
+ const item={name:(line1.value||"Personlig design"),details:`${width.value}×${height.value} mm · ${material.value} · ${motifSelect.value}`,price:parseInt(price.textContent)||799,qty:1,image:previewImage.src.split("/").pop()};
+ const existing=cart.find(x=>x.name===item.name&&x.details===item.details&&x.price===item.price);
+ existing?existing.qty++:cart.push(item);saveCart();showToast("Tillagt i kundvagnen");openPanel(cartDrawer)
+};
+$("#clearCart").addEventListener("click",()=>{cart=[];saveCart()});
+$("#checkoutButton").addEventListener("click",()=>cart.length?openPanel($("#checkoutModal")):showToast("Kundvagnen är tom"));
+$("#checkoutForm").addEventListener("submit",e=>{e.preventDefault();const order={id:"TD-"+Date.now().toString().slice(-6),date:new Date().toISOString(),customer:$("#checkoutName").value,email:$("#checkoutEmail").value,items:cart,total:cart.reduce((s,x)=>s+x.price*x.qty,0)};const orders=JSON.parse(localStorage.getItem("torchdraft-orders")||"[]");orders.unshift(order);localStorage.setItem("torchdraft-orders",JSON.stringify(orders));cart=[];saveCart();closePanels();showToast("Testorder "+order.id+" skapad")});
+
+function info(title,html){$("#infoModalTitle").textContent=title;$("#infoModalBody").innerHTML=html;openPanel($("#infoModal"))}
+$("#paymentInfo").onclick=()=>info("SÄKER BETALNING","<h3>Early Access</h3><p>Swish, kort, Klarna och faktura är planerade. Just nu skapar kassan endast testordrar och tar aldrig betalt.</p>");
+$("#shippingInfo").onclick=()=>info("LEVERANS","<h3>Planerade alternativ</h3><p>Spårbar frakt i Sverige samt hämtning i verkstad. Fraktpriser kopplas in när shoppen öppnas.</p>");
+$("#customerGallery").onclick=()=>document.querySelector("#inspiration").scrollIntoView({behavior:"smooth"});
+$("#supportButton").onclick=()=>openPanel($("#supportModal"));
+$("#reviewButton").onclick=()=>{renderReviews();openPanel($("#reviewModal"))};
+$("#supportForm").addEventListener("submit",e=>{e.preventDefault();const tickets=JSON.parse(localStorage.getItem("torchdraft-support")||"[]");tickets.unshift({id:"SUP-"+Date.now().toString().slice(-5),name:$("#supportName").value,email:$("#supportEmail").value,subject:$("#supportSubject").value,message:$("#supportMessage").value,date:new Date().toISOString()});localStorage.setItem("torchdraft-support",JSON.stringify(tickets));e.target.reset();closePanels();showToast("Supportärende sparat")});
+function renderReviews(){$("#reviewList").innerHTML=reviews.map(r=>`<div class="review-card"><b>${r.name}</b> <span class="rating">${"★".repeat(r.rating)}</span><p>${r.text}</p></div>`).join("")}
+$("#reviewForm").addEventListener("submit",e=>{e.preventDefault();reviews.unshift({name:$("#reviewName").value,rating:+$("#reviewRating").value,text:$("#reviewText").value});localStorage.setItem("torchdraft-reviews",JSON.stringify(reviews));e.target.reset();renderReviews();showToast("Tack för ditt omdöme")});
+
+$("#accountProjects").onclick=()=>{closePanels();document.querySelector("#studio").scrollIntoView({behavior:"smooth"});showToast("Öppna eller importera projekt i studion")};
+$("#accountFavorites").onclick=()=>info("FAVORITER","<p>Favoriter sparas i nästa steg. Produktkorten kan redan öppnas i studion.</p>");
+$("#accountOrders").onclick=()=>{const orders=JSON.parse(localStorage.getItem("torchdraft-orders")||"[]");info("BESTÄLLNINGAR",orders.length?orders.map(o=>`<p><b>${o.id}</b> · ${new Date(o.date).toLocaleDateString("sv-SE")} · ${o.total} kr</p>`).join(""):"<p>Inga testordrar ännu.</p>")};
+$("#accountDownloads").onclick=()=>info("MINA DXF-FILER","<p>DXF-filer laddas ned direkt till enheten. Projekt kan exporteras separat som TorchDraft JSON.</p>");
+
+$$(".studio-tool").forEach(b=>b.addEventListener("click",()=>{$$(".studio-tool").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");const tool=b.dataset.tool;if(tool==="text")line1.focus();if(tool==="design")motifSelect.focus();if(tool==="frame")frameMode.focus();if(tool==="material")material.focus();if(tool==="color")$$(".swatches button")[0].focus();if(tool==="info")info("DESIGN STUDIO","<p>Studio skapar kombinerad DXF med ram, monteringshål, skärbar stenciltext och valda vektormotiv.</p>")}));
+let zoom=1,is3d=false;
+$("#view3dButton").onclick=()=>{is3d=!is3d;$(".preview-stage").classList.toggle("preview-3d",is3d);$("#view3dButton").textContent=is3d?"2D VY":"3D VY"};
+$("#zoomInButton").onclick=()=>{zoom=Math.min(1.5,zoom+.1);previewImage.style.scale=zoom;motifPreview.style.scale=zoom};
+$("#zoomOutButton").onclick=()=>{zoom=Math.max(.7,zoom-.1);previewImage.style.scale=zoom;motifPreview.style.scale=zoom};
+$("#fullscreenButton").onclick=()=>{const el=$(".preview-stage");document.fullscreenElement?document.exitFullscreen():el.requestFullscreen?.()};
+renderCart();
