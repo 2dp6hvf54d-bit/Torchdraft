@@ -1,16 +1,44 @@
-# TorchDraft v0.4
+# TorchDraft v1.5 – Template Lab
 
-Fungerande alpha för CNC-plasma:
+Ny webbapp med ett riktigt mallbibliotek och exporterbar geometri.
 
-- Skyltgenerator
-- Snabbmall för husnummer
-- Snabbmall för eldkorgspanel
-- Snabbmall för väggkonst
-- Snabbmall för verktygstavla
-- DXF-export
-- SVG-export
-- Spara och öppna senaste projekt
-- Enkel Plasma Check
-- Mobilanpassning
+## Mallgrupper
+- Text och skylt
+- Jakt
+- Fiske
+- Natur
+- Verkstad
+- Paneler
 
-Kontrollera alltid exporterade filer i ArcDroid före skärning.
+## Originalmallar
+- Stencils skylt
+- Husnummer
+- Hjort i fjäll
+- Hjortfamilj
+- Fisk
+- Fisk i cirkel
+- Livets träd
+- Fjäril
+- Blomma
+- Hundtass
+- Grävmaskin
+- Kugghjulsmonogram
+- Eldkorgspanel
+- Cirkelpanel
+- Skogspanel
+
+## Textmotor
+- Torch Block
+- Torch Stencil
+- Torch Wide
+- Torch Narrow
+- Valbar bokstavstjocklek
+- Texten konverteras till rektangulär vektorgeometri, inte vanlig systemtext.
+
+## Export
+- DXF R12 i millimeter
+- SVG
+- PNG-förhandsbild
+
+## Viktigt
+Mallarna är egenritade och generiska. De inskickade bilderna har använts som kategorisk inspiration, inte kopierats. Kontrollera alltid filer i ArcDroid/CAM före skärning.
