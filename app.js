@@ -177,3 +177,33 @@ if(productType) productType.addEventListener("change",()=>{
   updatePreview();
 });
 applyStudioTransform();
+
+// === TorchDraft v10 completion layer ===
+(()=>{
+const q=s=>document.querySelector(s), qa=s=>[...document.querySelectorAll(s)];
+const toast=q('#toast'); function note(t){if(!toast)return;toast.textContent=t;toast.classList.add('show');clearTimeout(note.t);note.t=setTimeout(()=>toast.classList.remove('show'),2200)}
+function open(el){if(!el)return;q('#overlay')?.classList.add('show');el.classList.add('show')}
+function close(){q('#overlay')?.classList.remove('show');qa('.drawer,.modal').forEach(x=>x.classList.remove('show'))}
+qa('[data-close]').forEach(b=>b.onclick=close);q('#overlay')&&(q('#overlay').onclick=close);
+const ids=['line1','line2','fontSelect','fontSize','letterSpace','width','height','material','rotation','bottomDistance','frameMode','frameThickness','mountHole','motifSelect','motifScale','motifY','productType'];
+const el=Object.fromEntries(ids.map(x=>[x,q('#'+x)])); let current=null;
+function snap(){return{id:current||crypto.randomUUID?.()||String(Date.now()),name:el.line1?.value||'Projekt',updated:new Date().toISOString(),values:Object.fromEntries(ids.map(x=>[x,el[x]?.value])),mirror:q('#mirrorMotif')?.classList.contains('active'),holes:q('#toggleHoles')?.textContent!=='Inga hål'}}
+function apply(p){if(!p)return;current=p.id;Object.entries(p.values||{}).forEach(([k,v])=>{if(el[k]){el[k].value=v;el[k].dispatchEvent(new Event('input',{bubbles:true}))}});note('Projekt öppnat')}
+function all(){try{return JSON.parse(localStorage.getItem('td-projects-v10')||'[]')}catch{return[]}}
+function store(a){localStorage.setItem('td-projects-v10',JSON.stringify(a))}
+function save(){let p=snap(),a=all(),i=a.findIndex(x=>x.id===p.id);i>=0?a.splice(i,1,p):a.unshift(p);current=p.id;store(a);localStorage.setItem('td-current-v10',JSON.stringify(p));note('Projekt sparat')}
+function render(){let box=q('#projectList'),a=all();if(!box)return;box.innerHTML=a.length?a.map(p=>`<article class="saved-project-card"><h3>${String(p.name).replace(/[<>]/g,'')}</h3><p>${new Date(p.updated).toLocaleString('sv-SE')}</p><div class="card-actions"><button class="primary" data-po="${p.id}">ÖPPNA</button><button class="outline-btn" data-pd="${p.id}">RADERA</button></div></article>`).join(''):'<div class="empty-state">Inga projekt sparade.</div>';qa('[data-po]').forEach(b=>b.onclick=()=>{apply(all().find(x=>x.id===b.dataset.po));close()});qa('[data-pd]').forEach(b=>b.onclick=()=>{store(all().filter(x=>x.id!==b.dataset.pd));render()})}
+q('#saveProject')&&(q('#saveProject').onclick=save);q('#loadProject')&&(q('#loadProject').onclick=()=>{try{apply(JSON.parse(localStorage.getItem('td-current-v10')))}catch{note('Inget sparat projekt')}});
+q('#openProjectsButton')&&(q('#openProjectsButton').onclick=()=>{render();open(q('#projectBrowserModal'))});q('#projectsNav')&&(q('#projectsNav').onclick=e=>{e.preventDefault();render();open(q('#projectBrowserModal'))});q('#accountProjects')&&(q('#accountProjects').onclick=()=>{close();render();open(q('#projectBrowserModal'))});
+q('#newProjectButton')&&(q('#newProjectButton').onclick=()=>{current=null;if(el.line1)el.line1.value='108';if(el.line2)el.line2.value='';if(el.motifSelect)el.motifSelect.value='none';ids.forEach(k=>el[k]?.dispatchEvent(new Event('input',{bubbles:true})));close();note('Nytt projekt')});q('#duplicateProjectButton')&&(q('#duplicateProjectButton').onclick=()=>{current=null;if(el.line1)el.line1.value=(el.line1.value||'Projekt')+' KOPIA';save();render()});
+q('#helpButton')&&(q('#helpButton').onclick=()=>open(q('#helpModal')));
+const imgs=['prod-hjortfamilj.jpg','prod-alg.jpg','prod-gadda.jpg','prod-ram.jpg','prod-orn.jpg','prod-108.jpg','cat-jakt.jpg','cat-fiske.jpg','cat-fordon.jpg','cat-maskiner.jpg','cat-eldkorg.jpg','cat-husnummer.jpg'];
+function gallery(){let g=q('#galleryGrid');g.innerHTML=imgs.map(s=>`<button data-img="${s}"><img src="${s}"></button>`).join('');qa('[data-img]').forEach(b=>b.onclick=()=>{let im=q('#previewImage');if(im)im.src=b.dataset.img;close();note('Förhandsbild vald')});open(q('#galleryModal'))}
+q('#customerGallery')&&(q('#customerGallery').onclick=gallery);
+q('#pricesNav')&&(q('#pricesNav').onclick=e=>{e.preventDefault();q('#infoModalTitle').textContent='PRISER';q('#infoModalBody').innerHTML='<p>Priset räknas efter mått, material, motiv och komplexitet direkt i Design Studio.</p>';open(q('#infoModal'))});
+q('#aboutNav')&&(q('#aboutNav').onclick=e=>{e.preventDefault();q('#infoModalTitle').textContent='OM TORCHDRAFT';q('#infoModalBody').innerHTML='<p>TorchDraft är en Early Access-studio för personliga plasmaskurna produkter och skärfiler.</p>';open(q('#infoModal'))});
+q('#accountFavorites')&&(q('#accountFavorites').onclick=()=>{q('#infoModalTitle').textContent='FAVORITER';q('#infoModalBody').innerHTML='<p>Tryck på hjärtat på ett produktkort för att spara favoriter på enheten.</p>';open(q('#infoModal'))});
+qa('.product-card').forEach((c,i)=>{let heart=[...c.querySelectorAll('button')].find(b=>b.textContent.includes('♡'));if(heart)heart.onclick=e=>{e.stopPropagation();let fav=JSON.parse(localStorage.getItem('td-favs')||'[]'),id=c.dataset.product||String(i);fav.includes(id)?fav=fav.filter(x=>x!==id):fav.push(id);localStorage.setItem('td-favs',JSON.stringify(fav));heart.textContent=fav.includes(id)?'♥':'♡';note(fav.includes(id)?'Sparad som favorit':'Favorit borttagen')}});
+q('#exportDxf')?.addEventListener('click',e=>{if(!q('#confirmDryRun')?.checked){e.stopImmediatePropagation();e.preventDefault();note('Markera först att filen ska simuleras och torrköras.')}},true);q('#exportSvg')?.addEventListener('click',e=>{if(!q('#confirmDryRun')?.checked){e.stopImmediatePropagation();e.preventDefault();note('Markera först torrkörningsrutan.')}},true);
+q('#menuButton')&&(q('#menuButton').onclick=()=>document.body.classList.toggle('menu-open'));
+})();
