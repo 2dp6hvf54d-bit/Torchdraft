@@ -90,44 +90,198 @@
       </div>
     </section>
 
-    <section id="studio" class="studio-section">
-      <div class="studio-title"><h2>DESIGN STUDIO</h2><span>LIVE PREVIEW</span></div>
-      <div class="studio-shell">
-        <aside class="studio-tools">
-          <button class="selected studio-tool" data-tool="text"><b>T</b><span>TEXT</span></button>
-          <button class="studio-tool" data-tool="design"><b>✣</b><span>DESIGN</span></button>
-          <button class="studio-tool" data-tool="frame"><b>□</b><span>RAM</span></button>
-          <button class="studio-tool" data-tool="material"><b>◇</b><span>MATERIAL</span></button>
-          <button class="studio-tool" data-tool="color"><b>◐</b><span>FÄRG</span></button>
-          <button class="studio-tool" data-tool="info"><b>i</b><span>INFO</span></button>
-        </aside>
+    
+<section id="studio" class="studio-pro">
+  <div class="studio-pro-head">
+    <div>
+      <small>TORCHDRAFT STUDIO 4.0</small>
+      <h2>DESIGNA DIN PRODUKT</h2>
+      <p>En förenklad CAD-studio för plasma, skyltar och metallkonst.</p>
+    </div>
+    <div class="studio-pro-actions">
+      <button class="outline-btn" id="saveProject">SPARA</button>
+      <button class="outline-btn" id="loadProject">LADDA</button>
+      <button class="outline-btn" id="exportProject">EXPORTERA PROJEKT</button>
+      <input id="importProjectFile" type="file" accept=".json,.torchdraft.json" hidden>
+      <button class="outline-btn" id="importProject">IMPORTERA</button>
+    </div>
+  </div>
 
-        <aside class="editor-left">
-          <div class="field"><label>Rad 1</label><input id="line1" value="HALLGREN"></div>
-          <div class="field"><label>Rad 2 (valfri)</label><input id="line2" value="EST. 2024"></div>
-          <div class="field"><label>Skärbart motiv</label><select id="motifSelect"><option value="none">Inget motiv</option><option value="deer">Hjort</option><option value="fish">Gädda</option><option value="excavator">Grävmaskin</option><option value="mountains">Fjäll & granar</option><option value="flame">Flamma</option><option value="gear">Kugghjul</option></select></div><div class="field"><label>Typsnitt</label><select id="fontSelect"><option value="industrial">Industrial</option><option value="stencil">Stencil</option><option value="western">Western</option><option value="modern">Modern</option><option value="classic">Classic (förhandsvisning)</option><option value="cut-stencil">Cut Stencil – skärbar</option></select></div>
-          <div class="field"><label>Storlek</label><div class="number-row"><input id="fontSize" type="number" value="120"><span>mm</span><button>≡</button><button>☰</button></div></div>
-          <div class="field"><label>Bokstavsavstånd</label><input id="letterSpace" type="range" min="0" max="16" value="5"></div>
-          <button class="outline-btn" id="addText">LÄGG TILL TEXT</button><div class="project-buttons"><button class="outline-btn" id="saveProject">SPARA PROJEKT</button><button class="outline-btn" id="loadProject">LADDA SENASTE</button></div>
-        </aside>
+  <div class="studio-shell">
+    <aside class="studio-sidebar studio-left">
+      <div class="panel-title">VERKTYG</div>
+      <div class="studio-tool-grid">
+        <button class="studio-tool selected" data-tool="text"><b>T</b><span>Text</span></button>
+        <button class="studio-tool" data-tool="design"><b>✣</b><span>Motiv</span></button>
+        <button class="studio-tool" data-tool="frame"><b>□</b><span>Ram</span></button>
+        <button class="studio-tool" data-tool="material"><b>◇</b><span>Material</span></button>
+        <button class="studio-tool" data-tool="color"><b>◐</b><span>Färg</span></button>
+        <button class="studio-tool" data-tool="info"><b>i</b><span>Info</span></button>
+      </div>
 
-        <section class="preview-wrap">
-          <div class="preview-toolbar"><span>◉</span><button id="view3dButton">3D VY</button><span class="spacer"></span><button id="fullscreenButton">⛶</button><button id="zoomOutButton">−</button><button id="zoomInButton">＋</button></div>
-          <div class="preview-stage">
-            <img id="previewImage" src="studio-hjortfamilj.jpg" alt="Förhandsvisning av hjortfamilj"><svg id="motifPreview" viewBox="0 0 600 400"></svg>
-            <div class="preview-text">
-              <strong id="previewLine1">HALLGREN</strong>
-              <span id="previewLine2">EST. 2024</span>
-            </div>
+      <div class="studio-panel-group">
+        <label>Kategori</label>
+        <select id="productType">
+          <option value="sign">Skylt</option>
+          <option value="wallart">Väggkonst</option>
+          <option value="firebasket">Eldkorg</option>
+          <option value="vehicle">Fordonsdekor</option>
+          <option value="machine">Maskinmotiv</option>
+          <option value="house-number">Husnummer</option>
+        </select>
+      </div>
+
+      <div class="studio-panel-group">
+        <label>Skärbart motiv</label>
+        <select id="motifSelect">
+          <option value="none">Inget motiv</option>
+          <option value="deer">Hjort</option>
+          <option value="moose">Älg</option>
+          <option value="fish">Gädda</option>
+          <option value="excavator">Grävmaskin</option>
+          <option value="mountains">Fjäll & granar</option>
+          <option value="flame">Flamma</option>
+          <option value="gear">Kugghjul</option>
+          <option value="paw">Hundtass</option>
+          <option value="eagle">Örn</option>
+        </select>
+      </div>
+
+      <div class="studio-panel-group">
+        <label>AI-idé</label>
+        <textarea id="aiPrompt" rows="4" placeholder="Exempel: Dodge Ram framför fjäll med två granar och texten Hallgren Garage"></textarea>
+        <button class="primary full" id="aiSuggestButton">SKAPA FÖRSLAG</button>
+        <small id="aiStatus">AI-läge kör lokal prototyp tills API kopplas in.</small>
+      </div>
+    </aside>
+
+    <main class="studio-canvas-wrap">
+      <div class="canvas-toolbar">
+        <div class="canvas-toolbar-left">
+          <button id="view3dButton">3D VY</button>
+          <button id="gridToggle" class="active">RUTNÄT</button>
+          <button id="measureToggle" class="active">MÅTT</button>
+        </div>
+        <div class="canvas-toolbar-right">
+          <button id="zoomOutButton">−</button>
+          <span id="zoomLabel">100%</span>
+          <button id="zoomInButton">＋</button>
+          <button id="resetViewButton">ÅTERSTÄLL</button>
+          <button id="fullscreenButton">⛶</button>
+        </div>
+      </div>
+
+      <div class="canvas-stage" id="canvasStage">
+        <div class="canvas-grid" id="canvasGrid"></div>
+        <div class="dimension dimension-top" id="dimensionTop">600 mm</div>
+        <div class="dimension dimension-side" id="dimensionSide">400 mm</div>
+
+        <div class="workpiece" id="workpiece">
+          <img id="previewImage" src="studio-hjortfamilj.jpg" alt="Förhandsvisning">
+          <svg id="motifPreview" viewBox="0 0 600 400"></svg>
+          <div class="preview-text">
+            <div id="previewLine1">DIN TEXT</div>
+            <div id="previewLine2"></div>
           </div>
-          <div class="thumbs">
-            <button class="active"><img src="prod-hjortfamilj.jpg" alt=""></button>
-            <button><img src="prod-alg.jpg" alt=""></button>
-            <button><img src="prod-gadda.jpg" alt=""></button>
-            <button><img src="prod-ram.jpg" alt=""></button>
-            <button><img src="prod-orn.jpg" alt=""></button>
-          </div>
-        </section>
+        </div>
+      </div>
+
+      <div class="canvas-footer">
+        <div id="designMetrics" class="design-metrics">
+          <span>Konturer: –</span><span>Skärlängd: –</span><span>Poäng: –</span>
+        </div>
+        <div class="manufacturing-status" id="manufacturingStatus">
+          <b>SKÄRKONTROLL</b>
+          <span id="manufacturingText">Kontrollerar…</span>
+        </div>
+      </div>
+    </main>
+
+    <aside class="studio-sidebar studio-right">
+      <div class="panel-title">EGENSKAPER</div>
+
+      <div class="studio-panel-group">
+        <label>Text rad 1</label>
+        <input id="line1" value="108">
+        <label>Text rad 2</label>
+        <input id="line2" placeholder="Valfri underrad">
+      </div>
+
+      <div class="studio-panel-group">
+        <label>Typsnitt</label>
+        <select id="fontSelect">
+          <option value="cut-stencil">Cut Stencil – skärbar</option>
+          <option value="classic">Classic – förhandsvisning</option>
+          <option value="industrial">Industrial</option>
+          <option value="modern">Modern</option>
+        </select>
+        <div class="triple">
+          <div><small>Storlek</small><input id="fontSize" type="number" value="120"></div>
+          <div><small>Avstånd</small><input id="letterSpace" type="number" value="5"></div>
+          <div><small>Rotation</small><input id="rotation" type="number" value="0"></div>
+        </div>
+        <input id="rotationRange" type="range" min="-12" max="12" value="0">
+      </div>
+
+      <div class="studio-panel-group">
+        <label>Plåtmått</label>
+        <div class="double">
+          <div><small>Bredd mm</small><input id="width" type="number" value="600"></div>
+          <div><small>Höjd mm</small><input id="height" type="number" value="400"></div>
+        </div>
+      </div>
+
+      <div class="studio-panel-group">
+        <label>Motiv</label>
+        <div class="triple">
+          <div><small>Storlek %</small><input id="motifScale" type="number" value="58"></div>
+          <div><small>Höjd %</small><input id="motifY" type="number" value="12"></div>
+          <div><small>Textbotten</small><input id="bottomDistance" type="number" value="40"></div>
+        </div>
+        <button id="mirrorMotif" class="outline-btn full">SPEGELVÄND MOTIV</button>
+      </div>
+
+      <div class="studio-panel-group">
+        <label>Ram och hål</label>
+        <select id="frameMode">
+          <option value="outer">Ytterram</option>
+          <option value="plate">Hel plåt</option>
+          <option value="none">Ingen ram</option>
+        </select>
+        <div class="triple">
+          <div><small>Ramtjocklek</small><input id="frameThickness" type="number" value="12"></div>
+          <div><small>Hål Ø</small><input id="mountHole" type="number" value="8"></div>
+          <button id="toggleHoles">4 hål</button>
+        </div>
+      </div>
+
+      <div class="studio-panel-group">
+        <label>Material</label>
+        <select id="material">
+          <option>Stål 2 mm</option>
+          <option>Stål 3 mm</option>
+          <option>Corten 3 mm</option>
+          <option>Rostfritt 2 mm</option>
+        </select>
+        <div class="swatches">
+          <button data-color="#cfd4d7" class="active" style="--sw:#cfd4d7"></button>
+          <button data-color="#111111" style="--sw:#111111"></button>
+          <button data-color="#8a4f2d" style="--sw:#8a4f2d"></button>
+          <button data-color="#2d6f9f" style="--sw:#2d6f9f"></button>
+        </div>
+      </div>
+
+      <div class="studio-panel-group export-box">
+        <div class="price"><small>BERÄKNAT PRIS</small><strong id="price">799 kr</strong></div>
+        <button class="primary full" id="addCart">LÄGG I KUNDVAGN</button>
+        <button class="outline-btn full" id="exportDxf">EXPORTERA DXF</button>
+        <button class="outline-btn full" id="exportSvg">EXPORTERA SVG</button>
+        <button class="outline-btn full" id="addText">LÄGG TILL TEXT</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
 
         <aside class="editor-right">
           <div class="tabs"><button class="active">INSTÄLLNINGAR</button><button>INFO</button></div>

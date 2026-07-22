@@ -1,21 +1,15 @@
-# TorchDraft v8.0 Interactive
+# TorchDraft v9.0 Studio Pro
 
-Premiumdesign + fungerande gränssnitt.
+Ny huvudfunktion:
+- Riktig CAD-liknande arbetsyta med vänster verktygspanel, stor canvas och höger egenskapspanel
+- Zoom, panorering, rutnät, mått, återställning och fullskärm
+- Produktlägen: skylt, väggkonst, eldkorg, fordon, maskiner och husnummer
+- AI-idéruta med lokal regelbaserad prototyp som bygger förslag direkt
+- Kombinerad text, motiv, material, ram, hål, pris, DXF och SVG
+- Projektimport/export och lokal projektsparning
+- Kundvagn, konto, support, omdömen och testkassa från v8
 
-## Nu fungerar
-- Kundvagn med antal, totalsumma, borttagning och tömning
-- Testkassa som sparar testordrar lokalt
-- Kontomeny med projekt, orderhistorik och DXF-information
-- Kundtjänstformulär som sparar supportärenden lokalt
-- Omdömen: läsa och lämna omdöme
-- Betalnings- och leveransinformationsknappar
-- Kundbilder/inspirationsknapp
-- Alla verktygsknappar i Design Studio
-- 2D/3D-växling
-- Zoom in/ut
-- Fullskärmsläge
-- Studio, DXF, SVG, projektimport/export och vektormotiv från v7
-
-## Viktigt
-Kassa och support är Early Access-demonstrationer. Ingen riktig betalning eller e-post skickas.
-Data sparas i webbläsarens localStorage på den aktuella enheten.
+Viktigt:
+AI-rutan är i v9 en lokal prototyp. Den skickar inga externa API-anrop ännu.
+Riktig generativ AI kräver en säker serverfunktion och OPENAI_API_KEY i Vercel.
+Kontrollera alltid DXF i ArcDroid och torrkör före fysisk skärning.

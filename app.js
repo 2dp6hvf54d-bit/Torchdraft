@@ -107,3 +107,73 @@ $("#zoomInButton").onclick=()=>{zoom=Math.min(1.5,zoom+.1);previewImage.style.sc
 $("#zoomOutButton").onclick=()=>{zoom=Math.max(.7,zoom-.1);previewImage.style.scale=zoom;motifPreview.style.scale=zoom};
 $("#fullscreenButton").onclick=()=>{const el=$(".preview-stage");document.fullscreenElement?document.exitFullscreen():el.requestFullscreen?.()};
 renderCart();
+
+
+// ----- TorchDraft v9 Studio Pro -----
+const productType=$("#productType"),aiPrompt=$("#aiPrompt"),aiSuggestButton=$("#aiSuggestButton"),aiStatus=$("#aiStatus");
+const canvasStage=$("#canvasStage"),workpiece=$("#workpiece"),canvasGrid=$("#canvasGrid"),gridToggle=$("#gridToggle"),measureToggle=$("#measureToggle");
+const dimensionTop=$("#dimensionTop"),dimensionSide=$("#dimensionSide"),resetViewButton=$("#resetViewButton"),zoomLabel=$("#zoomLabel");
+let studioZoom=1,panX=0,panY=0,isPanning=false,startX=0,startY=0;
+
+function applyStudioTransform(){
+  workpiece.style.transform=`translate(${panX}px,${panY}px) scale(${studioZoom})`;
+  zoomLabel.textContent=Math.round(studioZoom*100)+"%";
+}
+if($("#zoomInButton")) $("#zoomInButton").onclick=()=>{studioZoom=Math.min(1.8,studioZoom+.1);applyStudioTransform()};
+if($("#zoomOutButton")) $("#zoomOutButton").onclick=()=>{studioZoom=Math.max(.5,studioZoom-.1);applyStudioTransform()};
+if(resetViewButton) resetViewButton.onclick=()=>{studioZoom=1;panX=0;panY=0;applyStudioTransform()};
+if(gridToggle) gridToggle.onclick=()=>{canvasGrid.classList.toggle("hidden");gridToggle.classList.toggle("active")};
+if(measureToggle) measureToggle.onclick=()=>{dimensionTop.classList.toggle("hidden");dimensionSide.classList.toggle("hidden");measureToggle.classList.toggle("active")};
+if(canvasStage){
+  canvasStage.addEventListener("pointerdown",e=>{if(e.target.closest("button"))return;isPanning=true;startX=e.clientX-panX;startY=e.clientY-panY;canvasStage.setPointerCapture(e.pointerId)});
+  canvasStage.addEventListener("pointermove",e=>{if(!isPanning)return;panX=e.clientX-startX;panY=e.clientY-startY;applyStudioTransform()});
+  canvasStage.addEventListener("pointerup",()=>isPanning=false);
+}
+if(width) width.addEventListener("input",()=>dimensionTop.textContent=(width.value||600)+" mm");
+if(height) height.addEventListener("input",()=>dimensionSide.textContent=(height.value||400)+" mm");
+
+const AI_RULES=[
+  {keys:["dodge","ram","pickup","truck"],motif:"gear",text:"HALLGREN GARAGE",sub:"DODGE RAM"},
+  {keys:["hjort","rådjur","jakt"],motif:"deer",text:"JAKTSTUGAN",sub:"JÄMTLAND"},
+  {keys:["älg"],motif:"moose",text:"ÄLGMARKEN",sub:"EST. 2026"},
+  {keys:["gädda","fiske","fisk"],motif:"fish",text:"FISKESTUGAN",sub:"JÄMTLAND"},
+  {keys:["grävmaskin","maskin","entreprenad"],motif:"excavator",text:"HALLGREN ENTREPRENAD",sub:"EST. 2026"},
+  {keys:["fjäll","åre","järpen","gran"],motif:"mountains",text:"FJÄLLGÅRDEN",sub:"JÄMTLAND"},
+  {keys:["eld","eldkorg","brasa"],motif:"flame",text:"FIRE PIT",sub:"CUSTOM STEEL"},
+  {keys:["hund","tass"],motif:"paw",text:"HUNDAR VÄLKOMNA",sub:"MÄNNISKOR TOLERERAS"},
+  {keys:["örn","eagle"],motif:"eagle",text:"FREEDOM",sub:"CUSTOM STEEL"}
+];
+function aiPrototype(prompt){
+  const p=prompt.toLowerCase();
+  let rule=AI_RULES.find(r=>r.keys.some(k=>p.includes(k)))||{motif:"mountains",text:"DIN DESIGN",sub:"TORCHDRAFT"};
+  const quoted=[...prompt.matchAll(/["“](.*?)["”]/g)].map(m=>m[1]);
+  const nameMatch=prompt.match(/text(?:en)?\s+([a-zåäö0-9 ]{3,35})/i);
+  return{
+    motif:rule.motif,
+    line1:(quoted[0]||nameMatch?.[1]||rule.text).trim().toUpperCase(),
+    line2:(quoted[1]||rule.sub).trim().toUpperCase(),
+    product:p.includes("eldkorg")?"firebasket":p.includes("husnummer")?"house-number":p.includes("vägg")?"wallart":"sign"
+  };
+}
+if(aiSuggestButton) aiSuggestButton.addEventListener("click",()=>{
+  const prompt=aiPrompt.value.trim();
+  if(!prompt){showToast("Skriv först vad du vill skapa");return}
+  aiStatus.textContent="Analyserar idé…";
+  aiSuggestButton.disabled=true;
+  setTimeout(()=>{
+    const idea=aiPrototype(prompt);
+    motifSelect.value=idea.motif;line1.value=idea.line1;line2.value=idea.line2;productType.value=idea.product;
+    updatePreview();
+    aiStatus.textContent="Förslag skapat lokalt. Riktig generativ AI kopplas in när API är aktivt.";
+    aiSuggestButton.disabled=false;
+    showToast("AI-förslag skapat");
+  },700)
+});
+if(productType) productType.addEventListener("change",()=>{
+  const type=productType.value;
+  if(type==="firebasket"){width.value=500;height.value=500;frameMode.value="plate"}
+  if(type==="house-number"){width.value=400;height.value=250;line1.value="108";line2.value="";motifSelect.value="none"}
+  if(type==="wallart"){width.value=700;height.value=500;frameMode.value="outer"}
+  updatePreview();
+});
+applyStudioTransform();
