@@ -7,7 +7,7 @@
 <meta content="#03070c" name="theme-color"/>
 <title>TorchDraft – Designa. Skär. Skapa.</title>
 <link href="app.css" rel="stylesheet"/>
-</head>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#061019"></head>
 <body>
 <svg aria-hidden="true" class="svg-sprite">
 <symbol id="icon-user" viewbox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-5 3-8 8-8s8 3 8 8"></path></symbol>
@@ -89,11 +89,13 @@
 <section class="studio-pro" id="studio">
 <div class="studio-pro-head">
 <div>
-<small>TORCHDRAFT STUDIO 4.0</small>
+<small>TORCHDRAFT STUDIO 5.0 · <span id="autosaveStatus">AUTOSPARAR</span></small>
 <h2>DESIGNA DIN PRODUKT</h2>
 <p>En förenklad CAD-studio för plasma, skyltar och metallkonst.</p>
 </div>
-<div class="studio-pro-actions"><button class="outline-btn" id="openProjectsButton">MINA PROJEKT</button><button class="outline-btn" id="helpButton">HJÄLP</button>
+<div class="studio-pro-actions">
+      <button class="outline-btn" id="undoButton" disabled>ÅNGRA</button>
+      <button class="outline-btn" id="redoButton" disabled>GÖR OM</button><button class="outline-btn" id="openProjectsButton">MINA PROJEKT</button><button class="outline-btn" id="installAppButton" hidden>INSTALLERA APP</button><button class="outline-btn" id="helpButton">HJÄLP</button>
 <button class="outline-btn" id="saveProject">SPARA</button>
 <button class="outline-btn" id="loadProject">LADDA</button>
 <button class="outline-btn" id="exportProject">EXPORTERA PROJEKT</button>
@@ -147,7 +149,7 @@
 </aside>
 <main class="studio-canvas-wrap">
 <div class="canvas-toolbar">
-<div class="canvas-toolbar-left">
+<div class="canvas-toolbar-left"><select id="selectedObject"><option value="text">Text</option><option value="motif">Motiv</option></select><button id="lockObjectButton">LÅS</button><button id="duplicateObjectButton">DUPLICERA</button><button id="deleteObjectButton">RADERA</button><button id="centerObjectButton">CENTRERA</button>
 <button id="view3dButton">3D VY</button>
 <button class="active" id="gridToggle">RUTNÄT</button>
 <button class="active" id="measureToggle">MÅTT</button>
@@ -167,7 +169,7 @@
 <div class="workpiece" id="workpiece">
 <img alt="Förhandsvisning" id="previewImage" src="studio-hjortfamilj.jpg"/>
 <svg id="motifPreview" viewbox="0 0 600 400"></svg>
-<div class="preview-text">
+<div class="selection-box" id="motifSelection" data-object="motif"><span class="handle nw"></span><span class="handle ne"></span><span class="handle sw"></span><span class="handle se"></span></div><div class="preview-text" id="textObject">
 <div id="previewLine1">DIN TEXT</div>
 <div id="previewLine2"></div>
 </div>
@@ -177,7 +179,7 @@
 <div class="design-metrics" id="designMetrics">
 <span>Konturer: –</span><span>Skärlängd: –</span><span>Poäng: –</span>
 </div>
-<div class="manufacturing-status" id="manufacturingStatus">
+<div class="cut-order-box"><b>SKÄRORDNING</b><span id="cutOrderText">Inre detaljer → text → motiv → ytterkontur</span></div><div class="manufacturing-status" id="manufacturingStatus">
 <b>SKÄRKONTROLL</b>
 <span id="manufacturingText">Kontrollerar…</span>
 </div>
@@ -255,6 +257,8 @@
 <button class="primary full" id="addCart">LÄGG I KUNDVAGN</button>
 <button class="outline-btn full" id="exportDxf">EXPORTERA DXF</button>
 <button class="outline-btn full" id="exportSvg">EXPORTERA SVG</button>
+        <button class="outline-btn full" id="exportJobSheet">PRODUKTIONSRAPPORT</button>
+        <button class="outline-btn full" id="printPreview">SKRIV UT FÖRHANDSVISNING</button>
 <button class="outline-btn full" id="addText">LÄGG TILL TEXT</button>
 </div>
 </aside>
@@ -357,5 +361,5 @@
 </section>
 <section class="modal" id="projectBrowserModal"><div class="modal-card project-browser-card"><div class="drawer-head"><h2>MINA PROJEKT</h2><button data-close="">×</button></div><div class="project-browser-actions"><button class="primary" id="newProjectButton">NYTT PROJEKT</button><button class="outline-btn" id="duplicateProjectButton">DUPLICERA</button></div><div class="project-list" id="projectList"></div></div></section><section class="modal" id="galleryModal"><div class="modal-card"><div class="drawer-head"><h2>INSPIRATION</h2><button data-close="">×</button></div><div class="gallery-grid" id="galleryGrid"></div></div></section><section class="modal" id="helpModal"><div class="modal-card"><div class="drawer-head"><h2>HJÄLP</h2><button data-close="">×</button></div><div class="modal-body"><h3>Skapa</h3><p>Välj produkt, motiv, text, material och mått.</p><h3>Kontrollera</h3><p>Kontrollera designpoäng, skärlängd och varningar.</p><h3>Exportera</h3><p>Markera torrkörningsrutan och exportera DXF eller SVG. Kontrollera alltid filen i ArcDroid.</p><h3>AI</h3><p>AI-rutan är just nu en lokal idéassistent. Extern generativ AI kräver en säker serverfunktion.</p></div></div></section><div class="toast" id="toast">Tillagt i kundvagnen</div>
 <script src="app.js"></script>
-</body>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body>
 </html>

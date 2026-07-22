@@ -1,5 +1,3 @@
-# TorchDraft v10.0 Complete Beta
+# TorchDraft v12.0 Object Editor
 
-Färdigkopplad betaversion med projektbibliotek, favoriter, inspiration, hjälp, pris/om oss, skärinställningar och exportspärr för torrkörning. Tidigare Design Studio, DXF/SVG, kundvagn, testkassa, support och omdömen är kvar.
-
-Extern AI, riktig betalning, e-post och molndatabas kräver backend och är därför inte falskt markerade som färdiga.
+Markera, flytta, skala, rotera, lås, centrera, justera och dölj text eller motiv. Objektlägen sparas i projekt. Kontrollera alltid DXF i ArcDroid och torrkör före skärning.

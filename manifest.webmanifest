@@ -1,0 +1,10 @@
+{
+  "name": "TorchDraft",
+  "short_name": "TorchDraft",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#03080d",
+  "theme_color": "#061019",
+  "description": "Designstudio för plasmaskärning och metallkonst.",
+  "icons": []
+}

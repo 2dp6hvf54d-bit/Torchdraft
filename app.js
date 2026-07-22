@@ -207,3 +207,216 @@ qa('.product-card').forEach((c,i)=>{let heart=[...c.querySelectorAll('button')].
 q('#exportDxf')?.addEventListener('click',e=>{if(!q('#confirmDryRun')?.checked){e.stopImmediatePropagation();e.preventDefault();note('Markera först att filen ska simuleras och torrköras.')}},true);q('#exportSvg')?.addEventListener('click',e=>{if(!q('#confirmDryRun')?.checked){e.stopImmediatePropagation();e.preventDefault();note('Markera först torrkörningsrutan.')}},true);
 q('#menuButton')&&(q('#menuButton').onclick=()=>document.body.classList.toggle('menu-open'));
 })();
+
+
+// ----- TorchDraft v11 workflow -----
+const HISTORY_LIMIT=50;
+let history=[],historyIndex=-1,historyLock=false,autosaveTimer=null,deferredInstallPrompt=null;
+
+function snapshot(){
+  return JSON.stringify(projectData());
+}
+function pushHistory(){
+  if(historyLock) return;
+  const snap=snapshot();
+  if(history[historyIndex]===snap) return;
+  history=history.slice(0,historyIndex+1);
+  history.push(snap);
+  if(history.length>HISTORY_LIMIT) history.shift();
+  historyIndex=history.length-1;
+  updateHistoryButtons();
+}
+function updateHistoryButtons(){
+  const u=byId("undoButton"),r=byId("redoButton");
+  if(u)u.disabled=historyIndex<=0;
+  if(r)r.disabled=historyIndex<0||historyIndex>=history.length-1;
+}
+function restoreHistory(index){
+  if(index<0||index>=history.length)return;
+  historyLock=true;
+  try{applyProject(JSON.parse(history[index]));historyIndex=index}
+  finally{historyLock=false;updateHistoryButtons()}
+}
+byId("undoButton")?.addEventListener("click",()=>restoreHistory(historyIndex-1));
+byId("redoButton")?.addEventListener("click",()=>restoreHistory(historyIndex+1));
+document.addEventListener("keydown",e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){
+    e.preventDefault();
+    e.shiftKey?restoreHistory(historyIndex+1):restoreHistory(historyIndex-1);
+  }
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="s"){
+    e.preventDefault();saveCurrent();
+  }
+});
+
+function scheduleAutosave(){
+  const status=byId("autosaveStatus");
+  if(status){status.textContent="SPARAR…";status.className="saving"}
+  clearTimeout(autosaveTimer);
+  autosaveTimer=setTimeout(()=>{
+    try{
+      const p=projectData();
+      localStorage.setItem("torchdraft-autosave-v11",JSON.stringify(p));
+      if(status){status.textContent="AUTOSPARAD";status.className=""}
+    }catch{
+      if(status){status.textContent="FEL VID SPARNING";status.className="error"}
+    }
+  },450);
+}
+Object.values(controls).filter(Boolean).forEach(e=>e.addEventListener("input",()=>{pushHistory();scheduleAutosave()}));
+["toggleHoles","mirrorMotif"].forEach(id=>byId(id)?.addEventListener("click",()=>{pushHistory();scheduleAutosave()}));
+$$(".swatches button").forEach(b=>b.addEventListener("click",()=>{pushHistory();scheduleAutosave()}));
+
+const autosaved=safeJson("torchdraft-autosave-v11",null);
+if(autosaved){
+  applyProject(autosaved);
+  showToast("Autosparat projekt återställt");
+}
+pushHistory();
+
+function setLayer(id,target,visible){
+  byId(target)?.classList.toggle("layer-hidden",!visible);
+}
+byId("layerBackground")?.addEventListener("change",e=>setLayer("layerBackground","previewImage",e.target.checked));
+byId("layerMotif")?.addEventListener("change",e=>setLayer("layerMotif","motifPreview",e.target.checked));
+byId("layerText")?.addEventListener("change",e=>document.querySelector(".workpiece .preview-text")?.classList.toggle("layer-hidden",!e.target.checked));
+byId("layerFrame")?.addEventListener("change",e=>{
+  if(!e.target.checked){
+    controls.frameMode.dataset.previous=controls.frameMode.value;
+    controls.frameMode.value="none";
+  }else{
+    controls.frameMode.value=controls.frameMode.dataset.previous||"outer";
+  }
+  updatePreview();pushHistory();scheduleAutosave();
+});
+
+function snapValue(v,step=5){return Math.round(v/step)*step}
+byId("canvasStage")?.addEventListener("pointerup",()=>{
+  if(byId("snapToggle")?.checked){
+    state.panX=snapValue(state.panX,10);
+    state.panY=snapValue(state.panY,10);
+    updateTransform();
+  }
+});
+
+function jobData(){
+  const g=geometry(),m=metrics(g),v=validate(),priceValue=calculatePrice();
+  const areaM2=(g.W*g.H/1_000_000);
+  const thicknessMatch=String(val("material","")).match(/(\d+(?:[.,]\d+)?)\s*mm/i);
+  const thickness=thicknessMatch?parseFloat(thicknessMatch[1].replace(",",".")):2;
+  const density=String(val("material","")).includes("Rostfritt")?8000:7850;
+  const estimatedWeight=areaM2*(thickness/1000)*density;
+  const speed=String(val("material","")).includes("3 mm")?1200:1800;
+  const cutMinutes=(m.len/speed)+m.contours*0.045;
+  return{
+    project:val("line1","Projekt"),
+    created:new Date().toISOString(),
+    productType:val("productType","sign"),
+    dimensions:{width:g.W,height:g.H},
+    material:val("material",""),
+    motif:val("motifSelect","none"),
+    frame:val("frameMode","none"),
+    mountingHoles:state.holes?4:0,
+    kerf:val("kerfWidth",1.4),
+    contours:m.contours,
+    cutLengthMeters:+(m.len/1000).toFixed(2),
+    estimatedCutMinutes:+cutMinutes.toFixed(1),
+    estimatedWeightKg:+estimatedWeight.toFixed(2),
+    designScore:v.score,
+    warnings:[...v.hard,...v.warnings],
+    priceSEK:priceValue
+  };
+}
+function jobSheetText(){
+  const j=jobData();
+  return[
+    "TORCHDRAFT PRODUKTIONSRAPPORT",
+    "============================",
+    `Projekt: ${j.project}`,
+    `Skapad: ${new Date(j.created).toLocaleString("sv-SE")}`,
+    `Produkt: ${j.productType}`,
+    `Mått: ${j.dimensions.width} × ${j.dimensions.height} mm`,
+    `Material: ${j.material}`,
+    `Motiv: ${j.motif}`,
+    `Ram: ${j.frame}`,
+    `Monteringshål: ${j.mountingHoles}`,
+    `Kerf: ${j.kerf} mm`,
+    `Konturer: ${j.contours}`,
+    `Skärlängd: ${j.cutLengthMeters} m`,
+    `Uppskattad skärtid: ${j.estimatedCutMinutes} min`,
+    `Uppskattad vikt: ${j.estimatedWeightKg} kg`,
+    `Designpoäng: ${j.designScore}/100`,
+    `Pris: ${j.priceSEK} kr`,
+    "",
+    "VARNINGAR",
+    j.warnings.length?j.warnings.map(x=>"- "+x).join("\n"):"Inga registrerade varningar.",
+    "",
+    "KONTROLL",
+    "[ ] DXF öppnad i ArcDroid",
+    "[ ] Mått verifierade",
+    "[ ] Skärordning kontrollerad",
+    "[ ] Torrkörning genomförd",
+    "[ ] Material och munstycke kontrollerade"
+  ].join("\n");
+}
+byId("exportJobSheet")?.addEventListener("click",()=>{
+  saveFile(`torchdraft-${slug()}-produktionsrapport.txt`,jobSheetText(),"text/plain");
+  saveFile(`torchdraft-${slug()}-produktionsdata.json`,JSON.stringify(jobData(),null,2),"application/json");
+  showToast("Produktionsrapport skapad");
+});
+
+function createPrintSheet(){
+  document.querySelector(".print-sheet")?.remove();
+  const j=jobData(),sheet=document.createElement("section");
+  sheet.className="print-sheet";
+  sheet.innerHTML=`<h1>TorchDraft – ${escapeHtml(j.project)}</h1>
+  <p>Produktionsunderlag skapat ${new Date(j.created).toLocaleString("sv-SE")}</p>
+  <table>
+   <tr><th>Mått</th><td>${j.dimensions.width} × ${j.dimensions.height} mm</td></tr>
+   <tr><th>Material</th><td>${escapeHtml(j.material)}</td></tr>
+   <tr><th>Motiv</th><td>${escapeHtml(j.motif)}</td></tr>
+   <tr><th>Konturer</th><td>${j.contours}</td></tr>
+   <tr><th>Skärlängd</th><td>${j.cutLengthMeters} m</td></tr>
+   <tr><th>Skärtid, uppskattad</th><td>${j.estimatedCutMinutes} min</td></tr>
+   <tr><th>Vikt, uppskattad</th><td>${j.estimatedWeightKg} kg</td></tr>
+   <tr><th>Designpoäng</th><td>${j.designScore}/100</td></tr>
+  </table>
+  <h2>Förhandsvisning</h2>${makeSvg()}
+  <h2>Kontroll</h2><p>□ Simulerad i ArcDroid &nbsp; □ Torrkörd &nbsp; □ Mått verifierade</p>`;
+  document.body.appendChild(sheet);
+}
+byId("printPreview")?.addEventListener("click",()=>{createPrintSheet();window.print()});
+
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();deferredInstallPrompt=e;
+  byId("installAppButton")?.removeAttribute("hidden");
+});
+byId("installAppButton")?.addEventListener("click",async()=>{
+  if(!deferredInstallPrompt)return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt=null;
+  byId("installAppButton").hidden=true;
+});
+
+
+// TorchDraft v12 object editor
+const objControls={selected:byId("selectedObject"),x:byId("objectX"),y:byId("objectY"),scale:byId("objectScale"),rotation:byId("objectRotation")};
+const objectState={text:{x:50,y:75,scale:100,rotation:0,locked:false,visible:true},motif:{x:50,y:42,scale:100,rotation:0,locked:false,visible:true}};
+let activeObject="text",objectDragging=false,objectStart=null,resizeMode=false;
+function selectedState(){return objectState[activeObject]}
+function setActiveObject(type){activeObject=type;if(objControls.selected)objControls.selected.value=type;byId("textObject")?.classList.toggle("selected",type==="text");byId("motifSelection")?.classList.toggle("active",type==="motif");syncObjectInputs()}
+function syncObjectInputs(){const o=selectedState();objControls.x.value=o.x.toFixed(1);objControls.y.value=o.y.toFixed(1);objControls.scale.value=o.scale.toFixed(1);objControls.rotation.value=o.rotation.toFixed(1);const b=byId("lockObjectButton");if(b){b.textContent=o.locked?"LÅS UPP":"LÅS";b.classList.toggle("active",o.locked)}}
+function applyObjectTransforms(){const t=objectState.text,m=objectState.motif,txt=byId("textObject"),motif=byId("motifPreview"),sel=byId("motifSelection");if(txt){txt.style.left=t.x+"%";txt.style.top=t.y+"%";txt.style.bottom="auto";txt.style.transform=`translate(-50%,-50%) scale(${t.scale/100}) rotate(${t.rotation}deg)`;txt.classList.toggle("object-locked",t.locked);txt.style.display=t.visible?"block":"none"}if(motif){motif.style.transformOrigin="center";motif.style.transform=`translate(${m.x-50}%,${m.y-50}%) scale(${m.scale/100}) rotate(${m.rotation}deg)`;motif.style.display=m.visible?"block":"none"}if(sel){const w=Math.max(22,Math.min(80,55*m.scale/100)),h=Math.max(18,Math.min(75,52*m.scale/100));sel.style.width=w+"%";sel.style.height=h+"%";sel.style.left=(m.x-w/2)+"%";sel.style.top=(m.y-h/2)+"%";sel.style.transform=`rotate(${m.rotation}deg)`;sel.classList.toggle("object-locked",m.locked)}}
+function updateObjectFromInputs(){const o=selectedState();o.x=Math.max(0,Math.min(100,+objControls.x.value||0));o.y=Math.max(0,Math.min(100,+objControls.y.value||0));o.scale=Math.max(10,Math.min(300,+objControls.scale.value||100));o.rotation=Math.max(-180,Math.min(180,+objControls.rotation.value||0));applyObjectTransforms();pushHistory();scheduleAutosave()}
+Object.values(objControls).filter(Boolean).forEach(e=>e.addEventListener("input",updateObjectFromInputs));objControls.selected?.addEventListener("change",()=>setActiveObject(objControls.selected.value));
+function startObjectDrag(e,type){setActiveObject(type);const o=objectState[type];if(o.locked)return showToast("Objektet är låst");e.stopPropagation();e.preventDefault();objectDragging=true;objectStart={x:e.clientX,y:e.clientY,ox:o.x,oy:o.y,scale:o.scale};resizeMode=e.target.classList?.contains("handle")}
+byId("textObject")?.addEventListener("pointerdown",e=>startObjectDrag(e,"text"));byId("motifSelection")?.addEventListener("pointerdown",e=>startObjectDrag(e,"motif"));byId("motifPreview")?.addEventListener("pointerdown",e=>startObjectDrag(e,"motif"));
+document.addEventListener("pointermove",e=>{if(!objectDragging||!objectStart)return;const rect=byId("workpiece")?.getBoundingClientRect();if(!rect)return;const o=selectedState();if(resizeMode){const d=((e.clientX-objectStart.x)+(e.clientY-objectStart.y))/2;o.scale=Math.max(10,Math.min(300,objectStart.scale+d/rect.width*180))}else{o.x=Math.max(0,Math.min(100,objectStart.ox+(e.clientX-objectStart.x)/rect.width*100));o.y=Math.max(0,Math.min(100,objectStart.oy+(e.clientY-objectStart.y)/rect.height*100))}applyObjectTransforms();syncObjectInputs()});
+document.addEventListener("pointerup",()=>{if(objectDragging){objectDragging=false;resizeMode=false;pushHistory();scheduleAutosave()}});
+byId("lockObjectButton")?.addEventListener("click",()=>{const o=selectedState();o.locked=!o.locked;syncObjectInputs();applyObjectTransforms();pushHistory();scheduleAutosave()});byId("centerObjectButton")?.addEventListener("click",()=>{const o=selectedState();o.x=50;o.y=50;syncObjectInputs();applyObjectTransforms();pushHistory();scheduleAutosave()});byId("deleteObjectButton")?.addEventListener("click",()=>{selectedState().visible=false;applyObjectTransforms();pushHistory();scheduleAutosave();showToast("Objekt dolt")});byId("duplicateObjectButton")?.addEventListener("click",()=>{const o=selectedState();o.visible=true;o.scale=Math.max(10,o.scale*.9);o.x=Math.min(90,o.x+8);o.y=Math.min(90,o.y+8);syncObjectInputs();applyObjectTransforms();pushHistory();scheduleAutosave();showToast("Objekt duplicerat")});
+const aligns={alignLeft:["x",15],alignCenter:["x",50],alignRight:["x",85],alignTop:["y",15],alignMiddle:["y",50],alignBottom:["y",85]};Object.entries(aligns).forEach(([id,[k,v]])=>byId(id)?.addEventListener("click",()=>{selectedState()[k]=v;syncObjectInputs();applyObjectTransforms();pushHistory();scheduleAutosave()}));
+document.addEventListener("keydown",e=>{if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName))return;const o=selectedState(),s=e.shiftKey?5:1;if(e.key==="ArrowLeft")o.x-=s;else if(e.key==="ArrowRight")o.x+=s;else if(e.key==="ArrowUp")o.y-=s;else if(e.key==="ArrowDown")o.y+=s;else if(e.key==="Delete"||e.key==="Backspace")o.visible=false;else return;e.preventDefault();o.x=Math.max(0,Math.min(100,o.x));o.y=Math.max(0,Math.min(100,o.y));syncObjectInputs();applyObjectTransforms();pushHistory();scheduleAutosave()});
+const prevProjectData=projectData;projectData=function(){const p=prevProjectData();p.objectState=JSON.parse(JSON.stringify(objectState));p.activeObject=activeObject;return p};const prevApplyProject=applyProject;applyProject=function(p){prevApplyProject(p);if(p?.objectState){Object.assign(objectState.text,p.objectState.text||{});Object.assign(objectState.motif,p.objectState.motif||{})}setActiveObject(p?.activeObject||"text");applyObjectTransforms()};
+function updateCutOrder(){const g=geometry(),steps=[];if(g.circles.length)steps.push(g.circles.length+" hål");if(g.textRects.length)steps.push(g.textRects.length+" textdetaljer");if(g.polylines.length)steps.push(g.polylines.length+" motivkonturer");if(g.rects.length)steps.push(g.rects.length+" ramkonturer");byId("cutOrderText").textContent=steps.join(" → ")||"Ingen geometri"}
+const prevUpdatePreview=updatePreview;updatePreview=function(){prevUpdatePreview();applyObjectTransforms();updateCutOrder()};updatePreview();setActiveObject("text");
