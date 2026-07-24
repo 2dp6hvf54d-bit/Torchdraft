@@ -1,12 +1,15 @@
-# TorchDraft v13.0 Simple + Pro
+# TorchDraft v14.0 Master Rebuild
 
-- Studion öppnas som en egen ren arbetsyta.
-- Startsida och kategoribilder syns inte bakom redigeringen.
-- Enkelt läge visar text, motiv, storlek, material, pris och kundvagn.
-- Pro-läge innehåller hela avancerade studion.
-- Startguide frågar vad användaren vill skapa.
-- Lokal idéassistent bygger ett första förslag.
-- Inställningar följer med mellan Enkelt och Pro.
+Helt ombyggd struktur:
 
-Riktig extern AI, betalning, e-post, inloggning och molnlagring kräver backend.
+- `index.html` är endast startsidan.
+- `studio.html` är en separat Design Studio.
+- Inga kategoribilder eller marknadsföringsdelar kan ligga bakom redigeringen.
+- Enkelt och Pro är riktiga lägen i studion, inte lager ovanpå den gamla sidan.
+- Direktlänkar från kategorier och produkter förinställer studion.
+- Enkelt läge: text, motiv, storlek, material, pris och kundvagn.
+- Pro-läge: ram, hål, lager, AI-idéassistent, kontroll, DXF, SVG och rapport.
+- Lokal kundvagn och flera sparade projekt.
+
+Extern AI, betalning, e-post, inloggning och molnlagring kräver backend.
 Kontrollera alltid DXF i ArcDroid och torrkör före skärning.

@@ -1,5 +1,16 @@
 {
-  "node_check": 0,
-  "stderr": "",
-  "duplicate_ids": []
+  "site.js": {
+    "code": 0,
+    "stderr": ""
+  },
+  "studio.js": {
+    "code": 0,
+    "stderr": ""
+  },
+  "index.html": {
+    "duplicate_ids": []
+  },
+  "studio.html": {
+    "duplicate_ids": []
+  }
 }

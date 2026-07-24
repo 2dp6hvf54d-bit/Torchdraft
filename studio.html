@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#02070c">
+  <title>TorchDraft Studio</title>
+  <link rel="stylesheet" href="studio.css">
+</head>
+<body class="mode-simple">
+<header class="appbar">
+  <a href="index.html">← STARTSIDA</a>
+  <div class="appbrand"><b>TORCHDRAFT</b><span>STUDIO</span></div>
+  <div class="mode-switch"><button id="simpleMode" class="active">ENKELT</button><button id="proMode">PRO</button></div>
+  <div class="app-actions"><button id="projectsButton">PROJEKT</button><button id="helpButton">HJÄLP</button></div>
+</header>
+
+<main>
+<section class="simple-layout" id="simpleView">
+  <div class="simple-preview panel">
+    <div class="preview-stage">
+      <svg id="simpleCanvas" viewBox="0 0 600 400"></svg>
+    </div>
+    <div class="simple-quality"><span id="simpleStatus">Redo</span><strong id="simplePrice">799 kr</strong></div>
+  </div>
+
+  <aside class="simple-controls panel">
+    <div class="intro"><small>ENKELT LÄGE</small><h1>Skapa på fyra steg</h1><p>Allt avancerat finns i Pro-läget, men du behöver inte använda det.</p></div>
+    <label><span>1</span><b>Text</b><input id="simpleText" value="108"><input id="simpleSubtext" placeholder="Underrad, valfri"></label>
+    <label><span>2</span><b>Motiv</b><select id="simpleMotif"><option value="none">Inget motiv</option><option value="deer">Hjort</option><option value="moose">Älg</option><option value="fish">Gädda</option><option value="excavator">Grävmaskin</option><option value="mountains">Fjäll & granar</option><option value="flame">Flamma</option><option value="gear">Kugghjul</option><option value="paw">Hundtass</option><option value="eagle">Örn</option></select></label>
+    <label><span>3</span><b>Storlek</b><div class="double"><input id="simpleWidth" type="number" value="600"><input id="simpleHeight" type="number" value="400"></div><small>Bredd × höjd i millimeter</small></label>
+    <label><span>4</span><b>Material</b><select id="simpleMaterial"><option>Stål 2 mm</option><option>Stål 3 mm</option><option>Corten 3 mm</option><option>Rostfritt 2 mm</option></select></label>
+    <button class="primary" id="simpleCart">LÄGG I KUNDVAGN</button>
+    <button class="secondary" id="goPro">ÖPPNA AVANCERADE INSTÄLLNINGAR</button>
+  </aside>
+</section>
+
+<section class="pro-layout" id="proView">
+  <aside class="panel left-panel">
+    <div class="panel-title">VERKTYG</div>
+    <div class="tool-grid">
+      <button data-section="text">TEXT</button><button data-section="motif">MOTIV</button>
+      <button data-section="frame">RAM</button><button data-section="material">MATERIAL</button>
+    </div>
+    <div class="group"><label>Produkt</label><select id="productType"><option value="sign">Skylt</option><option value="wallart">Väggkonst</option><option value="firebasket">Eldkorg</option><option value="house-number">Husnummer</option><option value="vehicle">Fordon</option><option value="machine">Maskiner</option></select></div>
+    <div class="group"><label>AI-idéassistent</label><textarea id="aiPrompt" rows="4" placeholder="Beskriv din idé..."></textarea><button class="primary" id="aiSuggest">SKAPA LOKALT FÖRSLAG</button><small>Extern generativ AI är ännu inte ansluten.</small></div>
+    <div class="group"><label>Lager</label><label class="check"><input id="layerMotif" type="checkbox" checked> Motiv</label><label class="check"><input id="layerText" type="checkbox" checked> Text</label><label class="check"><input id="layerFrame" type="checkbox" checked> Ram</label></div>
+  </aside>
+
+  <section class="canvas-panel panel">
+    <div class="canvas-toolbar">
+      <div><button id="gridToggle" class="active">RUTNÄT</button><button id="measureToggle" class="active">MÅTT</button><button id="viewToggle">3D VY</button></div>
+      <div><button id="zoomOut">−</button><span id="zoomLabel">100%</span><button id="zoomIn">＋</button><button id="resetView">ÅTERSTÄLL</button><button id="fullscreen">⛶</button></div>
+    </div>
+    <div class="canvas-stage" id="canvasStage">
+      <div class="grid" id="grid"></div>
+      <span class="measure top" id="measureW">600 mm</span><span class="measure side" id="measureH">400 mm</span>
+      <div class="workpiece" id="workpiece"><svg id="proCanvas" viewBox="0 0 600 400"></svg></div>
+    </div>
+    <div class="metrics"><span id="metricContours">Konturer: –</span><span id="metricLength">Skärlängd: –</span><span id="metricScore">Poäng: –</span></div>
+  </section>
+
+  <aside class="panel right-panel">
+    <div class="panel-title">EGENSKAPER</div>
+    <div class="group" data-group="text"><label>Text</label><input id="text" value="108"><input id="subtext" placeholder="Underrad"><div class="triple"><input id="fontSize" type="number" value="120"><input id="letterSpace" type="number" value="5"><input id="textY" type="number" value="72"></div></div>
+    <div class="group" data-group="motif"><label>Motiv</label><select id="motif"><option value="none">Inget</option><option value="deer">Hjort</option><option value="moose">Älg</option><option value="fish">Gädda</option><option value="excavator">Grävmaskin</option><option value="mountains">Fjäll & granar</option><option value="flame">Flamma</option><option value="gear">Kugghjul</option><option value="paw">Hundtass</option><option value="eagle">Örn</option></select><div class="triple"><input id="motifScale" type="number" value="58"><input id="motifY" type="number" value="12"><button id="mirrorMotif">SPEGEL</button></div></div>
+    <div class="group"><label>Plåtmått</label><div class="double"><input id="width" type="number" value="600"><input id="height" type="number" value="400"></div></div>
+    <div class="group" data-group="frame"><label>Ram och hål</label><select id="frame"><option value="outer">Ytterram</option><option value="plate">Hel plåt</option><option value="none">Ingen ram</option></select><div class="triple"><input id="frameThickness" type="number" value="12"><input id="holeDiameter" type="number" value="8"><button id="holesToggle" class="active">4 HÅL</button></div></div>
+    <div class="group" data-group="material"><label>Material</label><select id="material"><option>Stål 2 mm</option><option>Stål 3 mm</option><option>Corten 3 mm</option><option>Rostfritt 2 mm</option></select></div>
+    <div class="group"><label>Skärkontroll</label><div class="triple"><input id="kerf" type="number" step=".1" value="1.4"><input id="minFeature" type="number" step=".5" value="5"><input id="bridge" type="number" step=".5" value="6"></div><div class="status" id="status">Kontrollerar...</div></div>
+    <div class="price"><small>BERÄKNAT PRIS</small><strong id="price">799 kr</strong></div>
+    <label class="check"><input id="dryRun" type="checkbox"> Jag ska simulera och torrköra filen.</label>
+    <button class="primary" id="addCart">LÄGG I KUNDVAGN</button>
+    <button class="secondary" id="exportDxf">EXPORTERA DXF</button>
+    <button class="secondary" id="exportSvg">EXPORTERA SVG</button>
+    <button class="secondary" id="saveProject">SPARA PROJEKT</button>
+    <button class="secondary" id="productionReport">PRODUKTIONSRAPPORT</button>
+  </aside>
+</section>
+</main>
+
+<div class="drawer" id="cartDrawer"><div class="drawer-head"><h2>KUNDVAGN</h2><button data-close>×</button></div><div id="cartItems"></div><div class="drawer-total"><span>Summa</span><strong id="cartTotal">0 kr</strong></div><button class="secondary" id="clearCart">TÖM</button></div>
+<div class="drawer" id="projectsDrawer"><div class="drawer-head"><h2>PROJEKT</h2><button data-close>×</button></div><div id="projectList"></div></div>
+<div class="modal" id="helpModal"><div><div class="drawer-head"><h2>HJÄLP</h2><button data-close>×</button></div><p><b>Enkelt läge</b> räcker för de flesta kunder. Byt till Pro när du behöver DXF, ram, hål och produktionskontroll.</p><p>Kontrollera alltid exporterad fil i ArcDroid och torrkör innan fysisk skärning.</p></div></div>
+<div class="overlay" id="overlay"></div>
+<div class="toast" id="toast"></div>
+<script src="studio.js"></script>
+</body>
+</html>
