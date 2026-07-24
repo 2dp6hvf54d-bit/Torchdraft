@@ -8,7 +8,7 @@
 <title>TorchDraft – Designa. Skär. Skapa.</title>
 <link href="app.css" rel="stylesheet"/>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#061019"></head>
-<body>
+<body data-view="site">
 <svg aria-hidden="true" class="svg-sprite">
 <symbol id="icon-user" viewbox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-5 3-8 8-8s8 3 8 8"></path></symbol>
 <symbol id="icon-cart" viewbox="0 0 24 24"><path d="M2 3h3l2 12h11l3-8H6"></path><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle></symbol>
@@ -44,7 +44,30 @@
 <button aria-label="Meny" class="menu" id="menuButton">☰</button>
 </div>
 </header>
-<main id="top">
+
+<section class="studio-launcher" id="studioLauncher">
+  <div class="launcher-card">
+    <span class="launcher-kicker">TORCHDRAFT STUDIO</span>
+    <h1>Vad vill du skapa?</h1>
+    <p>Välj en produkt. Börja enkelt och öppna Pro-läget senare.</p>
+    <div class="launcher-grid">
+      <button data-launch-type="wallart"><b>Väggkonst</b><span>Motiv och personlig text</span></button>
+      <button data-launch-type="firebasket"><b>Eldkorg</b><span>Paneler med skärbara motiv</span></button>
+      <button data-launch-type="house-number"><b>Husnummer</b><span>Snabb adresskylt</span></button>
+      <button data-launch-type="vehicle"><b>Fordon</b><span>Garage- och fordonsmotiv</span></button>
+      <button data-launch-type="machine"><b>Maskiner</b><span>Entreprenad och verkstad</span></button>
+      <button data-launch-type="sign"><b>Egen design</b><span>Börja från en tom skylt</span></button>
+    </div>
+    <div class="launcher-ai">
+      <label>Beskriv din idé</label>
+      <textarea id="launcherPrompt" rows="3" placeholder="Exempel: En älg framför fjäll med texten Hallgren"></textarea>
+      <button class="primary" id="launcherAiButton">SKAPA FÖRSLAG</button>
+    </div>
+    <button class="launcher-close" id="launcherClose">Tillbaka till startsidan</button>
+  </div>
+</section>
+
+<main id="top" class="site-view">
 <section class="hero">
 <div class="hero-bg"></div>
 <div class="hero-shade"></div>
@@ -103,7 +126,29 @@
 <button class="outline-btn" id="importProject">IMPORTERA</button>
 </div>
 </div>
-<div class="studio-shell">
+
+<div class="simple-studio" id="simpleStudio">
+  <div class="simple-preview">
+    <div class="simple-stage" id="simpleStage">
+      <img id="simplePreviewImage" src="studio-hjortfamilj.jpg" alt="">
+      <svg id="simpleMotifPreview" viewBox="0 0 600 400"></svg>
+      <div class="simple-text"><strong id="simplePreviewLine1">DIN TEXT</strong><span id="simplePreviewLine2"></span></div>
+    </div>
+  </div>
+  <div class="simple-controls">
+    <div class="simple-step"><span>1</span><div><label>Text</label><input id="simpleLine1" value="108"><input id="simpleLine2" placeholder="Underrad, valfri"></div></div>
+    <div class="simple-step"><span>2</span><div><label>Motiv</label><select id="simpleMotif"><option value="none">Inget motiv</option><option value="deer">Hjort</option><option value="moose">Älg</option><option value="fish">Gädda</option><option value="excavator">Grävmaskin</option><option value="mountains">Fjäll & granar</option><option value="flame">Flamma</option><option value="gear">Kugghjul</option><option value="paw">Hundtass</option><option value="eagle">Örn</option></select></div></div>
+    <div class="simple-step"><span>3</span><div><label>Storlek</label><div class="double"><input id="simpleWidth" type="number" value="600"><input id="simpleHeight" type="number" value="400"></div><small>Bredd × höjd i millimeter</small></div></div>
+    <div class="simple-step"><span>4</span><div><label>Material</label><select id="simpleMaterial"><option>Stål 2 mm</option><option>Stål 3 mm</option><option>Corten 3 mm</option><option>Rostfritt 2 mm</option></select></div></div>
+    <div class="simple-summary">
+      <div><small>Beräknat pris</small><strong id="simplePrice">799 kr</strong></div>
+      <button class="primary" id="simpleAddCart">LÄGG I KUNDVAGN</button>
+      <button class="outline-btn" id="openProFromSimple">ÖPPNA AVANCERADE INSTÄLLNINGAR</button>
+    </div>
+  </div>
+</div>
+
+  <div class="studio-shell" id="proStudio">
 <aside class="studio-sidebar studio-left">
 <div class="panel-title">VERKTYG</div>
 <div class="studio-tool-grid">

@@ -420,3 +420,83 @@ document.addEventListener("keydown",e=>{if(["INPUT","TEXTAREA","SELECT"].include
 const prevProjectData=projectData;projectData=function(){const p=prevProjectData();p.objectState=JSON.parse(JSON.stringify(objectState));p.activeObject=activeObject;return p};const prevApplyProject=applyProject;applyProject=function(p){prevApplyProject(p);if(p?.objectState){Object.assign(objectState.text,p.objectState.text||{});Object.assign(objectState.motif,p.objectState.motif||{})}setActiveObject(p?.activeObject||"text");applyObjectTransforms()};
 function updateCutOrder(){const g=geometry(),steps=[];if(g.circles.length)steps.push(g.circles.length+" hål");if(g.textRects.length)steps.push(g.textRects.length+" textdetaljer");if(g.polylines.length)steps.push(g.polylines.length+" motivkonturer");if(g.rects.length)steps.push(g.rects.length+" ramkonturer");byId("cutOrderText").textContent=steps.join(" → ")||"Ingen geometri"}
 const prevUpdatePreview=updatePreview;updatePreview=function(){prevUpdatePreview();applyObjectTransforms();updateCutOrder()};updatePreview();setActiveObject("text");
+
+
+// ----- TorchDraft v13 simple/pro experience -----
+const launcher=byId("studioLauncher"),simpleModeButton=byId("simpleModeButton"),proModeButton=byId("proModeButton");
+function showLauncher(){launcher?.classList.add("show")}
+function enterStudio(mode="simple"){
+  launcher?.classList.remove("show");
+  document.body.dataset.view="studio";
+  setStudioMode(mode);
+  document.querySelector("#studio")?.scrollIntoView({behavior:"instant"});
+}
+function exitStudio(){
+  document.body.dataset.view="site";
+  document.body.classList.remove("simple-mode","pro-mode");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function setStudioMode(mode){
+  document.body.classList.toggle("simple-mode",mode==="simple");
+  document.body.classList.toggle("pro-mode",mode==="pro");
+  simpleModeButton?.classList.toggle("active",mode==="simple");
+  proModeButton?.classList.toggle("active",mode==="pro");
+  if(mode==="simple")syncSimpleFromPro(); else syncProFromSimple();
+}
+simpleModeButton?.addEventListener("click",()=>setStudioMode("simple"));
+proModeButton?.addEventListener("click",()=>setStudioMode("pro"));
+byId("openProFromSimple")?.addEventListener("click",()=>setStudioMode("pro"));
+byId("exitStudioButton")?.addEventListener("click",exitStudio);
+byId("launcherClose")?.addEventListener("click",()=>launcher?.classList.remove("show"));
+byId("studioHelpTop")?.addEventListener("click",()=>openPanel(byId("helpModal")));
+$$('a[href="#studio"],[data-go="studio"]').forEach(a=>a.addEventListener("click",e=>{e.preventDefault();showLauncher()}));
+
+const simple={
+ line1:byId("simpleLine1"),line2:byId("simpleLine2"),motif:byId("simpleMotif"),
+ width:byId("simpleWidth"),height:byId("simpleHeight"),material:byId("simpleMaterial"),
+ image:byId("simplePreviewImage"),svg:byId("simpleMotifPreview"),
+ preview1:byId("simplePreviewLine1"),preview2:byId("simplePreviewLine2"),price:byId("simplePrice")
+};
+function simpleTransformMotif(){
+ const polys=MOTIFS[simple.motif.value]||[],W=+simple.width.value||600,H=+simple.height.value||400,k=.58*Math.min(W,H)/100,top=H*.12;
+ return polys.map(poly=>poly.map(([x,y])=>[W/2+(x-50)*k,top+y*k]));
+}
+function updateSimple(){
+ simple.preview1.textContent=(simple.line1.value||"DIN TEXT").toUpperCase();
+ simple.preview2.textContent=(simple.line2.value||"").toUpperCase();
+ const W=+simple.width.value||600,H=+simple.height.value||400;
+ simple.svg.setAttribute("viewBox",`0 0 ${W} ${H}`);simple.svg.innerHTML="";
+ simpleTransformMotif().forEach(p=>{const e=document.createElementNS("http://www.w3.org/2000/svg","polygon");e.setAttribute("points",p.map(q=>q.join(",")).join(" "));simple.svg.appendChild(e)});
+ const area=W*H/240000,extra=simple.material.value.includes("3 mm")?100:simple.material.value.includes("Corten")?180:simple.material.value.includes("Rostfritt")?260:0,motif=simple.motif.value==="none"?0:120;
+ simple.price.textContent=Math.max(299,Math.round(799*area+extra+motif))+" kr";
+}
+Object.values(simple).filter(e=>e?.addEventListener).forEach(e=>e.addEventListener("input",updateSimple));
+function syncSimpleFromPro(){
+ simple.line1.value=controls.line1.value;simple.line2.value=controls.line2.value;simple.motif.value=controls.motifSelect.value;
+ simple.width.value=controls.width.value;simple.height.value=controls.height.value;simple.material.value=controls.material.value;
+ simple.image.src=preview.image.src;updateSimple();
+}
+function syncProFromSimple(){
+ controls.line1.value=simple.line1.value;controls.line2.value=simple.line2.value;controls.motifSelect.value=simple.motif.value;
+ controls.width.value=simple.width.value;controls.height.value=simple.height.value;controls.material.value=simple.material.value;
+ preview.image.src=simple.image.src;updatePreview();
+}
+byId("simpleAddCart")?.addEventListener("click",()=>{syncProFromSimple();byId("addCart")?.click()});
+$$("[data-launch-type]").forEach(b=>b.addEventListener("click",()=>{
+ const type=b.dataset.launchType;controls.productType.value=type;
+ if(type==="house-number"){simple.line1.value="108";simple.line2.value="";simple.motif.value="none";simple.width.value=400;simple.height.value=250}
+ else if(type==="firebasket"){simple.line1.value="HALLGREN";simple.line2.value="";simple.motif.value="flame";simple.width.value=500;simple.height.value=500}
+ else if(type==="vehicle"){simple.line1.value="HALLGREN GARAGE";simple.line2.value="";simple.motif.value="gear";simple.width.value=700;simple.height.value=400}
+ else if(type==="machine"){simple.line1.value="HALLGREN ENTREPRENAD";simple.line2.value="";simple.motif.value="excavator";simple.width.value=700;simple.height.value=420}
+ else if(type==="wallart"){simple.line1.value="HALLGREN";simple.line2.value="";simple.motif.value="deer";simple.width.value=700;simple.height.value=500}
+ else{simple.line1.value="DIN TEXT";simple.line2.value="";simple.motif.value="none";simple.width.value=600;simple.height.value=400}
+ updateSimple();enterStudio("simple");
+}));
+byId("launcherAiButton")?.addEventListener("click",()=>{
+ const prompt=byId("launcherPrompt").value.trim();if(!prompt)return showToast("Beskriv först vad du vill skapa");
+ const r=localAi(prompt);simple.line1.value=r.line1;simple.line2.value=r.line2;simple.motif.value=r.motif;updateSimple();enterStudio("simple");
+});
+$$(".product-card,.category-card").forEach(card=>card.addEventListener("click",e=>{
+ e.preventDefault();if(card.dataset.image)simple.image.src=card.dataset.image;if(card.dataset.product)simple.line1.value=card.dataset.product.toUpperCase();updateSimple();enterStudio("simple");
+}));
+updateSimple();
